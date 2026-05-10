@@ -79,7 +79,7 @@
     left:0; top:0;
     width:100%;
     pointer-events:none;
-    padding:clamp(10px, 2.4vw, 40px) clamp(12px, 4vw, 60px) 0;
+    padding:clamp(28px, 4.5vw, 70px) clamp(12px, 4vw, 60px) 0;
     text-align:center;
     animation:brandFloat 8s ease-in-out infinite;
   }
@@ -95,13 +95,13 @@
   .hero__brand .invite__small{
     font-size:clamp(9px, 2vw, 30px);
     font-weight:600;
-    letter-spacing:.30em;
+    letter-spacing:.08em;
     text-transform:uppercase;
   }
   .hero__brand .invite__rule{
     width:clamp(60px, 9vw, 120px);
     height:1px;
-    margin:clamp(6px,1.2vw,14px) auto clamp(6px,1vw,12px);
+    margin:clamp(1px,0.3vw,4px) auto clamp(1px,0.2vw,3px);
     background:linear-gradient(90deg,
       rgba(173,230,255,0) 0%,
       rgba(173,230,255,.85) 50%,
@@ -113,7 +113,7 @@
     font-family:"Playfair Display",Georgia,serif;
     font-size:clamp(20px, 4.8vw, 62px);
     font-weight:700;
-    letter-spacing:.06em;
+    letter-spacing:.03em;
     text-transform:uppercase;
   }
   .hero__brand .invite__kodu{
@@ -687,7 +687,7 @@
     </defs>
 
     <g class="hand hand--hour" id="hand-hour">
-      <path d="M 560 545
+      <path d="M 560 530
                L 552 481
                L 555 463
                L 560 451
@@ -695,12 +695,12 @@
                L 568 481 Z"
             fill="url(#handFill)"
             stroke="url(#handEdge)" stroke-width="1.8" stroke-linejoin="round"/>
-      <path d="M 560 541 L 560 459"
+      <path d="M 560 530 L 560 459"
             stroke="#ffd896" stroke-width=".7" opacity=".5"/>
     </g>
 
     <g class="hand hand--minute" id="hand-minute">
-      <path d="M 560 548
+      <path d="M 560 530
                L 553 437
                L 556 415
                L 560 403
@@ -708,16 +708,14 @@
                L 567 437 Z"
             fill="url(#handFill)"
             stroke="url(#handEdge)" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M 560 545 L 560 409"
+      <path d="M 560 530 L 560 409"
             stroke="#ffd896" stroke-width=".6" opacity=".45"/>
     </g>
 
     <g class="hand hand--second" id="hand-second">
-      <line x1="560" y1="556" x2="560" y2="423"
+      <line x1="560" y1="530" x2="560" y2="423"
             stroke="#aee2ff" stroke-width="1.6" stroke-linecap="round"/>
       <circle cx="560" cy="431" r="2.8" fill="#e0f2ff"/>
-      <circle cx="560" cy="556" r="5"
-              fill="none" stroke="#5ec8ff" stroke-width="1.4"/>
     </g>
 
     <circle class="pin-glow" cx="560" cy="530" r="20" fill="url(#pinGlow)"/>
