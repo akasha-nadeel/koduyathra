@@ -10,6 +10,10 @@
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
+  html{
+    scroll-behavior:smooth;
+    -webkit-tap-highlight-color:transparent;
+  }
   html,body{background:#000;color:#e8eef6}
   body{
     min-height:100vh;
@@ -24,6 +28,11 @@
     align-items:center;
     justify-content:flex-start;
     -webkit-text-size-adjust:100%; /* iOS no auto text inflation */
+    -webkit-overflow-scrolling:touch; /* legacy iOS momentum scroll */
+  }
+  /* Honor user motion preference (smooth scroll auto-reverts to instant). */
+  @media (prefers-reduced-motion:reduce){
+    html{ scroll-behavior:auto; }
   }
 
   /* Invitation card — portrait, sized so the IMAGE fills the viewport
@@ -211,23 +220,20 @@
 
   .hero__stars .cg-star{
     fill:#ffffff;
+    /* Three-layer shadow (was five) — lighter on GPU during scroll. */
     filter:
-      drop-shadow(0 0 2px rgba(255,255,255,1))
-      drop-shadow(0 0 6px rgba(255,255,255,1))
-      drop-shadow(0 0 16px rgba(173,230,255,1))
-      drop-shadow(0 0 34px rgba(94,200,255,1))
-      drop-shadow(0 0 50px rgba(94,160,220,.7));
+      drop-shadow(0 0 4px rgba(255,255,255,1))
+      drop-shadow(0 0 14px rgba(173,230,255,1))
+      drop-shadow(0 0 32px rgba(94,200,255,.85));
     animation:cgStarGlow var(--dur,3.6s) ease-in-out infinite;
     animation-delay:var(--delay,0s);
   }
   .hero__stars .cg-star.warm{
     fill:#fff5d6;
     filter:
-      drop-shadow(0 0 2px rgba(255,255,255,1))
-      drop-shadow(0 0 6px rgba(255,245,210,1))
-      drop-shadow(0 0 16px rgba(255,210,140,1))
-      drop-shadow(0 0 34px rgba(255,170,80,1))
-      drop-shadow(0 0 50px rgba(255,140,40,.7));
+      drop-shadow(0 0 4px rgba(255,245,210,1))
+      drop-shadow(0 0 14px rgba(255,210,140,1))
+      drop-shadow(0 0 32px rgba(255,170,80,.8));
   }
   /* Bright solid core circle inside each star group — guarantees a visible
      dot even if the sparkle path renders thin at small viewport scales. */
@@ -299,6 +305,11 @@
     color:#f6f8fc;
     text-align:center;
     overflow:hidden;
+    /* Skip rendering when offscreen — big paint/layout savings while
+       hero animations are running. ~720px reserved height matches the
+       section so scroll position stays accurate. */
+    content-visibility:auto;
+    contain-intrinsic-size:1px 720px;
   }
   .event-details::before,
   .event-details::after{
