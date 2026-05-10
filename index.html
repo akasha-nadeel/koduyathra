@@ -118,12 +118,14 @@
   }
   .hero__brand .invite__kodu{
     display:block;
-    margin-top:clamp(20px,4.5vw,48px);
-    font-family:"Playfair Display",Georgia,serif;
-    font-size:clamp(46px, 11vw, 96px);
-    font-weight:800;
-    letter-spacing:.03em;
-    text-transform:uppercase;
+    margin:clamp(20px,4.5vw,48px) auto 0;
+    width:clamp(280px, 72vw, 780px);
+    max-width:92%;
+    height:auto;
+    filter:
+      drop-shadow(0 0 10px rgba(180,220,255,.55))
+      drop-shadow(0 0 24px rgba(94,160,220,.30))
+      drop-shadow(0 2px 6px rgba(0,0,0,.85));
   }
   @keyframes brandFloat{
     0%,100%{transform:translateY(0)}
@@ -450,7 +452,13 @@
       <div class="invite__small">We Cordially</div>
       <div class="invite__rule"></div>
       <div class="invite__big">Invite You To</div>
-      <div class="invite__kodu">Kodu Yathra</div>
+      <picture>
+        <source srcset="assets/kodu-yathra-sinhala.webp" type="image/webp" />
+        <img class="invite__kodu"
+             src="assets/kodu-yathra-sinhala.png"
+             alt="Kodu Yathra"
+             decoding="async" />
+      </picture>
     </div>
   </div>
 
