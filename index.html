@@ -47,43 +47,28 @@
     display:block;
   }
 
-  /* All overlays share viewBox 1122×1402 with xMidYMid slice (matches
-     object-fit:cover) so coords stay welded to the dial. */
-  .hero__brand,
+  /* SVG overlays share viewBox 1122×1402 with xMidYMid slice (matches
+     object-fit:cover) so coords stay welded to the dial. Brand + bottom
+     logo are now native HTML so are NOT in this group. */
   .hero__hands,
   .hero__ring,
-  .hero__stars,
-  .hero__logo-bottom{
+  .hero__stars{
     position:absolute; inset:0;
     width:100%; height:100%;
     pointer-events:none;
   }
 
-  /* Bottom logo overlay — sits beneath the couple. */
-  .logo-bottom-inner{
-    width:100%; height:100%;
-    display:flex; align-items:center; justify-content:center;
-    animation:brandFloat 8s ease-in-out infinite;
-  }
-  .logo-bottom-inner img.logo{
-    width:60%;
-    max-width:520px;
-    height:auto;
-    display:block;
-    filter:
-      drop-shadow(0 0 2px rgba(170,215,255,.6))
-      drop-shadow(0 0 12px rgba(94,200,255,.45));
-  }
-
   /* Brand lockup overlaid in the upper portion (above the clock).
-     Clock center is (560, 530), painted ring top ≈ y 385. We render
-     INSIDE the SVG via foreignObject so layout scales with the card. */
-  .hero__brand .brand-inner{
-    width:100%; height:100%;
-    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+     Native HTML overlay (NOT SVG foreignObject) — Safari/iOS renders
+     foreignObject text in device px instead of SVG-scaled px, which
+     overflowed on iPhone. This block sizes with vw clamps. */
+  .hero__brand{
+    position:absolute;
+    left:0; top:0;
+    width:100%;
+    pointer-events:none;
+    padding:clamp(20px, 3vw, 40px) clamp(16px, 4vw, 60px) 0;
     text-align:center;
-    padding-top:24px;
-    gap:18px;
     animation:brandFloat 8s ease-in-out infinite;
   }
   .hero__brand .invite{
@@ -96,14 +81,15 @@
       0 2px 6px rgba(0,0,0,.85);
   }
   .hero__brand .invite__small{
-    font-size:30px;
+    font-size:clamp(14px, 3vw, 30px);
     font-weight:600;
     letter-spacing:.30em;
     text-transform:uppercase;
   }
   .hero__brand .invite__rule{
-    width:120px; height:1px;
-    margin:14px auto 12px;
+    width:clamp(80px, 11vw, 120px);
+    height:1px;
+    margin:clamp(8px,1.4vw,14px) auto clamp(8px,1.2vw,12px);
     background:linear-gradient(90deg,
       rgba(173,230,255,0) 0%,
       rgba(173,230,255,.85) 50%,
@@ -113,36 +99,46 @@
   .hero__brand .invite__big{
     display:block;
     font-family:"Playfair Display",Georgia,serif;
-    font-size:62px;
+    font-size:clamp(34px, 7.2vw, 62px);
     font-weight:700;
     letter-spacing:.06em;
     text-transform:uppercase;
   }
   .hero__brand .invite__kodu{
     display:block;
-    margin-top:48px;
+    margin-top:clamp(20px,4.5vw,48px);
     font-family:"Playfair Display",Georgia,serif;
-    font-size:96px;
+    font-size:clamp(46px, 11vw, 96px);
     font-weight:800;
-    letter-spacing:.04em;
+    letter-spacing:.03em;
     text-transform:uppercase;
-  }
-  .hero__brand img.logo{
-    width:42%;
-    max-width:340px;
-    height:auto;
-    display:block;
-    margin-top:8px;
-    filter:
-      drop-shadow(0 0 2px rgba(170,215,255,.6))
-      drop-shadow(0 0 10px rgba(94,200,255,.45));
   }
   @keyframes brandFloat{
     0%,100%{transform:translateY(0)}
     50%   {transform:translateY(-5px)}
   }
   @media (prefers-reduced-motion:reduce){
-    .hero__brand .brand-inner{animation:none}
+    .hero__brand{animation:none}
+    .hero__logo-bottom{animation:none}
+  }
+
+  /* Bottom ship-logo overlay — native HTML (was SVG foreignObject). */
+  .hero__logo-bottom{
+    position:absolute;
+    left:0; right:0;
+    bottom:5%;
+    display:flex; align-items:center; justify-content:center;
+    pointer-events:none;
+    animation:brandFloat 8s ease-in-out infinite;
+  }
+  .hero__logo-bottom img.logo{
+    width:60%;
+    max-width:520px;
+    height:auto;
+    display:block;
+    filter:
+      drop-shadow(0 0 2px rgba(170,215,255,.6))
+      drop-shadow(0 0 12px rgba(94,200,255,.45));
   }
 
   /* Decorative dotted rings — clock center (560, 530), painted ring r ≈ 145. */
@@ -430,35 +426,22 @@
          alt="A couple stands on a barren rocky landscape under a starlit sky, gazing up at a glowing clock framed in cyan light." />
   </picture>
 
-  <!-- Brand lockup: invite copy + ship logo, overlaid above the clock. -->
-  <svg class="hero__brand"
-       viewBox="0 0 1122 1402"
-       preserveAspectRatio="xMidYMid slice"
-       aria-label="We Cordially Invite You To Kodu Yathra">
-    <foreignObject x="61" y="20" width="1000" height="360">
-      <div xmlns="http://www.w3.org/1999/xhtml" class="brand-inner">
-        <div class="invite">
-          <div class="invite__small">We Cordially</div>
-          <div class="invite__rule"></div>
-          <div class="invite__big">Invite You To</div>
-          <div class="invite__kodu">Kodu Yathra</div>
-        </div>
-      </div>
-    </foreignObject>
-  </svg>
+  <!-- Brand lockup: invite copy. Native HTML overlay (not foreignObject)
+       so iOS Safari doesn't render it in device px. -->
+  <div class="hero__brand" aria-label="We Cordially Invite You To Kodu Yathra">
+    <div class="invite">
+      <div class="invite__small">We Cordially</div>
+      <div class="invite__rule"></div>
+      <div class="invite__big">Invite You To</div>
+      <div class="invite__kodu">Kodu Yathra</div>
+    </div>
+  </div>
 
-  <!-- Ship logo overlay placed below the couple. -->
-  <svg class="hero__logo-bottom"
-       viewBox="0 0 1122 1402"
-       preserveAspectRatio="xMidYMid slice"
-       aria-label="Kodu Yathra">
-    <foreignObject x="161" y="1010" width="800" height="320">
-      <div xmlns="http://www.w3.org/1999/xhtml" class="logo-bottom-inner">
-        <img class="logo" src="assets/kodu-yathra-logo-clean.png"
-             alt="Kodu Yathra ship logo with Sinhala wordmark" />
-      </div>
-    </foreignObject>
-  </svg>
+  <!-- Ship logo overlay placed below the couple. Native HTML overlay. -->
+  <div class="hero__logo-bottom" aria-label="Kodu Yathra">
+    <img class="logo" src="assets/kodu-yathra-logo-clean.png"
+         alt="Kodu Yathra ship logo with Sinhala wordmark" />
+  </div>
 
   <svg class="hero__stars"
        viewBox="0 0 1122 1402"
