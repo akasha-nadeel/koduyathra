@@ -79,7 +79,7 @@
     left:0; top:0;
     width:100%;
     pointer-events:none;
-    padding:clamp(20px, 3vw, 40px) clamp(16px, 4vw, 60px) 0;
+    padding:clamp(10px, 2.4vw, 40px) clamp(12px, 4vw, 60px) 0;
     text-align:center;
     animation:brandFloat 8s ease-in-out infinite;
   }
@@ -93,15 +93,15 @@
       0 2px 6px rgba(0,0,0,.85);
   }
   .hero__brand .invite__small{
-    font-size:clamp(14px, 3vw, 30px);
+    font-size:clamp(9px, 2vw, 30px);
     font-weight:600;
     letter-spacing:.30em;
     text-transform:uppercase;
   }
   .hero__brand .invite__rule{
-    width:clamp(80px, 11vw, 120px);
+    width:clamp(60px, 9vw, 120px);
     height:1px;
-    margin:clamp(8px,1.4vw,14px) auto clamp(8px,1.2vw,12px);
+    margin:clamp(6px,1.2vw,14px) auto clamp(6px,1vw,12px);
     background:linear-gradient(90deg,
       rgba(173,230,255,0) 0%,
       rgba(173,230,255,.85) 50%,
@@ -111,20 +111,24 @@
   .hero__brand .invite__big{
     display:block;
     font-family:"Playfair Display",Georgia,serif;
-    font-size:clamp(34px, 7.2vw, 62px);
+    font-size:clamp(20px, 4.8vw, 62px);
     font-weight:700;
     letter-spacing:.06em;
     text-transform:uppercase;
   }
   .hero__brand .invite__kodu{
-    display:block;
-    margin:clamp(20px,4.5vw,48px) auto 0;
-    width:clamp(280px, 72vw, 780px);
+    display:flex;
+    justify-content:center;
+    margin-top:clamp(8px,2.4vw,40px);
+  }
+  .hero__brand .kodu-title{
+    height:clamp(54px, 14vw, 180px);
+    width:auto;
     max-width:92%;
-    height:auto;
+    display:block;
     filter:
-      drop-shadow(0 0 10px rgba(180,220,255,.55))
-      drop-shadow(0 0 24px rgba(94,160,220,.30))
+      drop-shadow(0 0 12px rgba(180,220,255,.55))
+      drop-shadow(0 0 28px rgba(94,160,220,.35))
       drop-shadow(0 2px 6px rgba(0,0,0,.85));
   }
   @keyframes brandFloat{
@@ -436,14 +440,11 @@
 <body>
 
 <section class="hero" data-screen-label="Hero">
-  <picture>
-    <source srcset="assets/hero-clock-portrait-v2.webp" type="image/webp" />
-    <img class="hero__art"
-         src="assets/hero-clock-portrait-v2.png"
-         fetchpriority="high"
-         decoding="async"
-         alt="A couple stands on a barren rocky landscape under a starlit sky, gazing up at a glowing clock framed in cyan light." />
-  </picture>
+  <img class="hero__art"
+       src="assets/hero-clock-portrait-v2.webp"
+       fetchpriority="high"
+       decoding="async"
+       alt="A couple stands on a barren rocky landscape under a starlit sky, gazing up at a glowing clock framed in cyan light." />
 
   <!-- Brand lockup: invite copy. Native HTML overlay (not foreignObject)
        so iOS Safari doesn't render it in device px. -->
@@ -452,20 +453,17 @@
       <div class="invite__small">We Cordially</div>
       <div class="invite__rule"></div>
       <div class="invite__big">Invite You To</div>
-      <picture>
-        <source srcset="assets/kodu-yathra-sinhala.webp" type="image/webp" />
-        <img class="invite__kodu"
-             src="assets/kodu-yathra-sinhala.png"
-             alt="Kodu Yathra"
-             decoding="async" />
-      </picture>
+      <div class="invite__kodu" lang="si">
+        <img src="assets/kodu-yathra-sinhala.webp" alt="කොඩු යාත්‍රා" class="kodu-title" decoding="async">
+      </div>
     </div>
   </div>
 
   <!-- Ship logo overlay placed below the couple. Native HTML overlay. -->
   <div class="hero__logo-bottom" aria-label="Kodu Yathra">
-    <img class="logo" src="assets/kodu-yathra-logo-clean.png"
-         alt="Kodu Yathra ship logo with Sinhala wordmark" />
+    <img class="logo" src="assets/kodu-yathra-logo-clean.webp"
+         alt="Kodu Yathra ship logo with Sinhala wordmark"
+         decoding="async" />
   </div>
 
   <svg class="hero__stars"
