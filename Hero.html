@@ -1,0 +1,775 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kodu Yathra — Invitation</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{background:#000;color:#e8eef6}
+  body{
+    min-height:100vh;
+    overflow-x:hidden;
+    overflow-y:auto;
+    background:
+      radial-gradient(ellipse at 50% 30%, #0a1428 0%, #05060a 55%, #02030a 100%);
+    font-family:"Playfair Display","Times New Roman",Georgia,serif;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-start;
+  }
+
+  /* Invitation card — portrait, sized so the IMAGE fills the viewport
+     HEIGHT (width auto, preserves the source aspect). On narrower
+     viewports the image height is capped to the viewport width's
+     aspect ratio so it never clips. */
+  .hero{
+    position:relative;
+    width:100vw;
+    aspect-ratio: 1122 / 1402;
+    height:auto;
+    overflow:hidden;
+    background:#000;
+    box-shadow:
+      0 0 60px rgba(0,0,0,.85),
+      0 0 0 1px rgba(94,200,255,.10);
+  }
+  .hero__art{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    object-position:center center;
+    display:block;
+  }
+
+  /* All overlays share viewBox 1122×1402 with xMidYMid slice (matches
+     object-fit:cover) so coords stay welded to the dial. */
+  .hero__brand,
+  .hero__hands,
+  .hero__ring,
+  .hero__stars,
+  .hero__logo-bottom{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    pointer-events:none;
+  }
+
+  /* Bottom logo overlay — sits beneath the couple. */
+  .logo-bottom-inner{
+    width:100%; height:100%;
+    display:flex; align-items:center; justify-content:center;
+    animation:brandFloat 8s ease-in-out infinite;
+  }
+  .logo-bottom-inner img.logo{
+    width:60%;
+    max-width:520px;
+    height:auto;
+    display:block;
+    filter:
+      drop-shadow(0 0 2px rgba(170,215,255,.6))
+      drop-shadow(0 0 12px rgba(94,200,255,.45));
+  }
+
+  /* Brand lockup overlaid in the upper portion (above the clock).
+     Clock center is (560, 530), painted ring top ≈ y 385. We render
+     INSIDE the SVG via foreignObject so layout scales with the card. */
+  .hero__brand .brand-inner{
+    width:100%; height:100%;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    text-align:center;
+    padding-top:24px;
+    gap:18px;
+    animation:brandFloat 8s ease-in-out infinite;
+  }
+  .hero__brand .invite{
+    font-family:"Cormorant Garamond","Playfair Display",Georgia,serif;
+    color:#f6f8fc;
+    line-height:1;
+    text-shadow:
+      0 0 10px rgba(180,220,255,.45),
+      0 0 24px rgba(94,160,220,.25),
+      0 2px 6px rgba(0,0,0,.85);
+  }
+  .hero__brand .invite__small{
+    font-size:30px;
+    font-weight:600;
+    letter-spacing:.30em;
+    text-transform:uppercase;
+  }
+  .hero__brand .invite__rule{
+    width:120px; height:1px;
+    margin:14px auto 12px;
+    background:linear-gradient(90deg,
+      rgba(173,230,255,0) 0%,
+      rgba(173,230,255,.85) 50%,
+      rgba(173,230,255,0) 100%);
+    box-shadow:0 0 8px rgba(94,200,255,.6);
+  }
+  .hero__brand .invite__big{
+    display:block;
+    font-family:"Playfair Display",Georgia,serif;
+    font-size:62px;
+    font-weight:700;
+    letter-spacing:.06em;
+    text-transform:uppercase;
+  }
+  .hero__brand .invite__kodu{
+    display:block;
+    margin-top:48px;
+    font-family:"Playfair Display",Georgia,serif;
+    font-size:96px;
+    font-weight:800;
+    letter-spacing:.04em;
+    text-transform:uppercase;
+  }
+  .hero__brand img.logo{
+    width:42%;
+    max-width:340px;
+    height:auto;
+    display:block;
+    margin-top:8px;
+    filter:
+      drop-shadow(0 0 2px rgba(170,215,255,.6))
+      drop-shadow(0 0 10px rgba(94,200,255,.45));
+  }
+  @keyframes brandFloat{
+    0%,100%{transform:translateY(0)}
+    50%   {transform:translateY(-5px)}
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hero__brand .brand-inner{animation:none}
+  }
+
+  /* Decorative dotted rings — clock center (560, 530), painted ring r ≈ 145. */
+  .hero__ring .ring-cw,
+  .hero__ring .ring-ccw{
+    transform-box:view-box;
+    transform-origin:560px 530px;
+    filter:
+      drop-shadow(0 0 4px rgba(94,200,255,.85))
+      drop-shadow(0 0 12px rgba(94,200,255,.5));
+  }
+  .hero__ring .ring-cw  { animation:ringCW  28s linear infinite; }
+  .hero__ring .ring-ccw { animation:ringCCW 46s linear infinite; }
+  @keyframes ringCW  { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+  @keyframes ringCCW { from{transform:rotate(0)} to{transform:rotate(-360deg)} }
+  @media (prefers-reduced-motion:reduce){
+    .hero__ring .ring-cw, .hero__ring .ring-ccw { animation:none }
+  }
+
+  .hero__stars circle{
+    fill:#f4faff;
+    transform-box:fill-box;
+    transform-origin:center;
+    animation:twinkle var(--dur,4s) ease-in-out infinite;
+    animation-delay:var(--delay,0s);
+    filter:
+      drop-shadow(0 0 4px rgba(220,240,255,1))
+      drop-shadow(0 0 12px rgba(120,190,255,.85));
+  }
+  .hero__stars circle.warm{
+    fill:#fff2d2;
+    filter:
+      drop-shadow(0 0 4px rgba(255,235,190,1))
+      drop-shadow(0 0 12px rgba(255,180,90,.7));
+  }
+  @keyframes twinkle{
+    0%,100% { opacity:.25; transform:scale(.5) }
+    50%     { opacity:1;   transform:scale(1.4)  }
+  }
+
+  /* Real constellations — Ursa Major, Orion, Cygnus, Leo.
+     Each `.cg` group fades in/out on rotation. Stars + lines fade together. */
+  .hero__stars .cg{
+    opacity:0;
+    animation:cgCycle 12s ease-in-out infinite;
+  }
+  .hero__stars .cg-1{ animation-delay:0s;  }
+  .hero__stars .cg-2{ animation-delay:3s;  }
+  .hero__stars .cg-3{ animation-delay:6s;  }
+  .hero__stars .cg-4{ animation-delay:9s;  }
+  @keyframes cgCycle{
+    0%        { opacity:0   }
+    4%        { opacity:.45 }
+    22%       { opacity:.45 }
+    25%, 100% { opacity:0   }
+  }
+
+  .hero__stars .cg-line{
+    fill:none;
+    stroke:#e6f3ff;
+    stroke-width:1.4;
+    stroke-linecap:round;
+    stroke-linejoin:round;
+    opacity:.8;
+    filter:drop-shadow(0 0 4px rgba(173,230,255,.95));
+  }
+
+  .hero__stars .cg-star{
+    fill:#ffffff;
+    filter:
+      drop-shadow(0 0 2px rgba(255,255,255,1))
+      drop-shadow(0 0 6px rgba(255,255,255,1))
+      drop-shadow(0 0 16px rgba(173,230,255,1))
+      drop-shadow(0 0 34px rgba(94,200,255,1))
+      drop-shadow(0 0 50px rgba(94,160,220,.7));
+    animation:cgStarGlow var(--dur,3.6s) ease-in-out infinite;
+    animation-delay:var(--delay,0s);
+  }
+  .hero__stars .cg-star.warm{
+    fill:#fff5d6;
+    filter:
+      drop-shadow(0 0 2px rgba(255,255,255,1))
+      drop-shadow(0 0 6px rgba(255,245,210,1))
+      drop-shadow(0 0 16px rgba(255,210,140,1))
+      drop-shadow(0 0 34px rgba(255,170,80,1))
+      drop-shadow(0 0 50px rgba(255,140,40,.7));
+  }
+  /* Bright solid core circle inside each star group — guarantees a visible
+     dot even if the sparkle path renders thin at small viewport scales. */
+  .hero__stars .cg-star .core{
+    fill:#ffffff;
+  }
+  .hero__stars .cg-star.warm .core{
+    fill:#fff5d6;
+  }
+  @keyframes cgStarGlow{
+    0%,100% { opacity:.7 }
+    50%     { opacity:1  }
+  }
+
+  @media (prefers-reduced-motion:reduce){
+    .hero__stars circle{ animation:none; opacity:.85 }
+    .hero__stars .cg{ animation:none; opacity:1 }
+    .hero__stars .cg-2, .hero__stars .cg-3, .hero__stars .cg-4{ opacity:0 }
+    .hero__stars .cg-star{ animation:none }
+  }
+
+  /* Desktop: shrink constellation patterns slightly (scale around clock pivot
+     so they stay anchored to the dial). Mobile keeps full size. */
+  @media (min-width: 720px){
+    .hero__stars .cg{
+      transform: scale(.82);
+      transform-box: view-box;
+      transform-origin: 560px 530px;
+    }
+  }
+
+  /* Hands rotate around dial pivot (560, 530). */
+  .hero__hands .hand{
+    transform-box:view-box;
+    transform-origin:560px 530px;
+    will-change:transform;
+  }
+  .hero__hands .hand--hour,
+  .hero__hands .hand--minute{
+    filter:
+      drop-shadow(0 0 1px rgba(0,0,0,.95))
+      drop-shadow(0 0 5px rgba(0,0,0,.85))
+      drop-shadow(0 0 10px rgba(255,200,120,.4));
+  }
+  .hero__hands .hand--second{
+    filter:
+      drop-shadow(0 0 6px rgba(94,200,255,.85))
+      drop-shadow(0 0 14px rgba(94,200,255,.45));
+  }
+  .hero__hands .pin{
+    filter:
+      drop-shadow(0 0 6px rgba(255,184,77,.9))
+      drop-shadow(0 0 14px rgba(255,184,77,.55));
+  }
+  @keyframes pinPulse{ 0%,100%{opacity:1} 50%{opacity:.7} }
+  .hero__hands .pin-glow{ animation:pinPulse 3.6s ease-in-out infinite; }
+
+  /* ───── Event details section (below the hero) ───── */
+  .event-details{
+    position:relative;
+    width:100vw;
+    padding:90px 24px 110px;
+    background:
+      radial-gradient(ellipse at 50% 0%, rgba(94,160,220,.10) 0%, rgba(5,6,10,0) 60%),
+      linear-gradient(180deg, #02030a 0%, #05070d 100%);
+    color:#f6f8fc;
+    text-align:center;
+    overflow:hidden;
+  }
+  .event-details::before,
+  .event-details::after{
+    content:"";
+    position:absolute;
+    left:50%;
+    transform:translateX(-50%);
+    width:min(520px, 70%);
+    height:1px;
+    background:linear-gradient(90deg,
+      rgba(243,169,59,0) 0%,
+      rgba(243,169,59,.55) 50%,
+      rgba(243,169,59,0) 100%);
+    box-shadow:0 0 10px rgba(243,169,59,.35);
+  }
+  .event-details::before{ top:0; }
+  .event-details::after{ bottom:0; }
+
+  .event-details__tagline{
+    max-width:760px;
+    margin:0 auto 60px;
+    font-family:"Cormorant Garamond","Playfair Display",Georgia,serif;
+    font-size:clamp(18px, 2.2vw, 26px);
+    font-weight:500;
+    letter-spacing:.18em;
+    text-transform:uppercase;
+    line-height:1.7;
+    color:#e8eef6;
+  }
+  .event-details__tagline .accent{
+    color:#f3a93b;
+    font-weight:600;
+    text-shadow:0 0 14px rgba(243,169,59,.45);
+  }
+
+  .event-card{
+    display:flex;
+    align-items:stretch;
+    justify-content:center;
+    gap:0;
+    max-width:1100px;
+    margin:0 auto;
+    border-top:1px solid rgba(173,230,255,.12);
+    border-bottom:1px solid rgba(173,230,255,.12);
+  }
+  .event-card__col{
+    flex:1 1 0;
+    padding:38px 28px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    gap:14px;
+    position:relative;
+  }
+  .event-card__col + .event-card__col::before{
+    content:"";
+    position:absolute;
+    left:0; top:18%;
+    width:1px; height:64%;
+    background:linear-gradient(180deg,
+      rgba(173,230,255,0) 0%,
+      rgba(173,230,255,.35) 50%,
+      rgba(173,230,255,0) 100%);
+  }
+  .event-card__label{
+    font-family:"Cormorant Garamond","Playfair Display",Georgia,serif;
+    font-size:13px;
+    font-weight:600;
+    letter-spacing:.42em;
+    text-transform:uppercase;
+    color:#aee2ff;
+    opacity:.85;
+  }
+  .event-card__value{
+    font-family:"Playfair Display",Georgia,serif;
+    font-size:clamp(28px, 3.6vw, 44px);
+    font-weight:700;
+    letter-spacing:.04em;
+    line-height:1.1;
+    color:#f6f8fc;
+    text-shadow:
+      0 0 18px rgba(94,160,220,.20),
+      0 2px 6px rgba(0,0,0,.85);
+  }
+  .event-card__value .gold{
+    color:#f3a93b;
+    text-shadow:
+      0 0 14px rgba(243,169,59,.55),
+      0 0 28px rgba(243,169,59,.25);
+  }
+  .event-card__value sup{
+    font-size:.5em;
+    font-weight:600;
+    vertical-align:super;
+    margin-left:2px;
+  }
+  .event-card__sub{
+    font-family:"Cormorant Garamond","Playfair Display",Georgia,serif;
+    font-size:14px;
+    font-weight:500;
+    letter-spacing:.32em;
+    text-transform:uppercase;
+    color:#cfd9e6;
+    opacity:.8;
+  }
+
+  @media (max-width: 720px){
+    .event-card{ flex-direction:column; }
+    .event-card__col{ padding:30px 18px; }
+    .event-card__col + .event-card__col::before{
+      left:18%; top:0;
+      width:64%; height:1px;
+      background:linear-gradient(90deg,
+        rgba(173,230,255,0) 0%,
+        rgba(173,230,255,.35) 50%,
+        rgba(173,230,255,0) 100%);
+    }
+  }
+</style>
+</head>
+<body>
+
+<section class="hero" data-screen-label="Hero">
+  <img class="hero__art"
+       src="assets/hero-clock-portrait-v2.png"
+       alt="A couple stands on a barren rocky landscape under a starlit sky, gazing up at a glowing clock framed in cyan light." />
+
+  <!-- Brand lockup: invite copy + ship logo, overlaid above the clock. -->
+  <svg class="hero__brand"
+       viewBox="0 0 1122 1402"
+       preserveAspectRatio="xMidYMid slice"
+       aria-label="We Cordially Invite You To Kodu Yathra">
+    <foreignObject x="61" y="20" width="1000" height="360">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="brand-inner">
+        <div class="invite">
+          <div class="invite__small">We Cordially</div>
+          <div class="invite__rule"></div>
+          <div class="invite__big">Invite You To</div>
+          <div class="invite__kodu">Kodu Yathra</div>
+        </div>
+      </div>
+    </foreignObject>
+  </svg>
+
+  <!-- Ship logo overlay placed below the couple. -->
+  <svg class="hero__logo-bottom"
+       viewBox="0 0 1122 1402"
+       preserveAspectRatio="xMidYMid slice"
+       aria-label="Kodu Yathra">
+    <foreignObject x="161" y="1010" width="800" height="320">
+      <div xmlns="http://www.w3.org/1999/xhtml" class="logo-bottom-inner">
+        <img class="logo" src="assets/kodu-yathra-logo-clean.png"
+             alt="Kodu Yathra ship logo with Sinhala wordmark" />
+      </div>
+    </foreignObject>
+  </svg>
+
+  <svg class="hero__stars"
+       viewBox="0 0 1122 1402"
+       preserveAspectRatio="xMidYMid slice"
+       aria-hidden="true">
+    <circle cx="80"   cy="90"  r="1.8" style="--dur:3.2s; --delay:0s"/>
+    <circle cx="180"  cy="160" r="2.4" style="--dur:4.8s; --delay:.7s"/>
+    <circle cx="260"  cy="50"  r="1.4" style="--dur:2.6s; --delay:1.4s"/>
+    <circle cx="340"  cy="220" r="2.0" style="--dur:5.2s; --delay:.3s"/>
+    <circle cx="160"  cy="280" r="2.8" class="warm" style="--dur:6.4s; --delay:1.1s"/>
+    <circle cx="60"   cy="330" r="1.6" style="--dur:3.8s; --delay:.9s"/>
+    <circle cx="220"  cy="380" r="2.2" style="--dur:4.4s; --delay:.4s"/>
+    <circle cx="780"  cy="80"  r="1.6" style="--dur:3.6s; --delay:.5s"/>
+    <circle cx="860"  cy="190" r="2.6" style="--dur:5.8s; --delay:1.3s"/>
+    <circle cx="940"  cy="120" r="1.9" style="--dur:4.2s; --delay:.1s"/>
+    <circle cx="1000" cy="260" r="1.4" style="--dur:2.8s; --delay:1.5s"/>
+    <circle cx="1060" cy="380" r="2.2" class="warm" style="--dur:6.0s; --delay:.8s"/>
+    <circle cx="900"  cy="320" r="1.7" style="--dur:3.8s; --delay:1.1s"/>
+    <circle cx="1020" cy="160" r="1.5" style="--dur:4.6s; --delay:.4s"/>
+    <circle cx="1080" cy="60"  r="2.0" style="--dur:5.0s; --delay:1.7s"/>
+    <circle cx="640"  cy="90"  r="1.5" style="--dur:3.6s; --delay:.3s"/>
+    <circle cx="500"  cy="160" r="1.3" style="--dur:2.8s; --delay:1.2s"/>
+
+    <!-- Extra dot-stars sprinkled across the sky (avoiding clock zone). -->
+    <circle cx="120"  cy="430" r="1.6" style="--dur:4.4s; --delay:.6s"/>
+    <circle cx="300"  cy="420" r="1.3" style="--dur:3.2s; --delay:1.6s"/>
+    <circle cx="40"   cy="200" r="1.2" style="--dur:5.0s; --delay:.2s"/>
+    <circle cx="240"  cy="110" r="1.7" class="warm" style="--dur:4.0s; --delay:1.0s"/>
+    <circle cx="420"  cy="60"  r="1.4" style="--dur:3.0s; --delay:.5s"/>
+    <circle cx="700"  cy="40"  r="1.6" style="--dur:4.2s; --delay:1.3s"/>
+    <circle cx="820"  cy="350" r="1.3" style="--dur:3.4s; --delay:.7s"/>
+    <circle cx="980"  cy="430" r="1.8" class="warm" style="--dur:5.4s; --delay:.9s"/>
+    <circle cx="1080" cy="220" r="1.4" style="--dur:3.8s; --delay:.2s"/>
+    <circle cx="560"  cy="120" r="1.2" style="--dur:2.6s; --delay:1.1s"/>
+    <circle cx="380"  cy="300" r="1.3" style="--dur:3.2s; --delay:.4s"/>
+    <circle cx="760"  cy="260" r="1.4" style="--dur:4.6s; --delay:1.5s"/>
+
+    <!-- Real constellations cycle in/out (12s loop, 3s each). Each group
+         contains its connecting line + bright stars at each named position.
+         All star coords kept clear of clock dial (center 560,530, r 148). -->
+
+    <!-- 1. URSA MAJOR — Big Dipper, right of clock at clock height. -->
+    <g class="cg cg-1" aria-label="Ursa Major">
+      <polyline class="cg-line"
+        points="1080,460 1080,540 970,530 970,450 1080,460 970,450 870,420 800,380 740,340"/>
+      <!-- Dubhe -->
+      <g class="cg-star" transform="translate(1080 460)" style="--dur:3.6s;--delay:.0s">
+        <circle class="core" r="5.5"/>
+      </g>
+      <!-- Merak -->
+      <g class="cg-star" transform="translate(1080 540)" style="--dur:4.0s;--delay:.6s">
+        <circle class="core" r="5"/>
+      </g>
+      <!-- Phecda -->
+      <g class="cg-star" transform="translate(970 530)" style="--dur:3.8s;--delay:.3s">
+        <circle class="core" r="4.5"/>
+      </g>
+      <!-- Megrez -->
+      <g class="cg-star" transform="translate(970 450)" style="--dur:4.2s;--delay:.9s">
+        <circle class="core" r="4"/>
+      </g>
+      <!-- Alioth (handle) -->
+      <g class="cg-star warm" transform="translate(870 420)" style="--dur:3.4s;--delay:.2s">
+        <circle class="core" r="5"/>
+      </g>
+      <!-- Mizar -->
+      <g class="cg-star" transform="translate(800 380)" style="--dur:3.7s;--delay:.7s">
+        <circle class="core" r="4.5"/>
+      </g>
+      <!-- Alkaid -->
+      <g class="cg-star" transform="translate(740 340)" style="--dur:4.1s;--delay:.4s">
+        <circle class="core" r="5.5"/>
+      </g>
+    </g>
+
+    <!-- 2. ORION — left of clock at clock height (slight upward shift). -->
+    <g class="cg cg-2" aria-label="Orion">
+      <polyline class="cg-line"
+        points="110,620 130,510 100,400 280,420 270,530 290,630 270,530 200,520 130,510"/>
+      <!-- Betelgeuse (red giant — warm) -->
+      <g class="cg-star warm" transform="translate(100 400)" style="--dur:3.6s;--delay:.0s">
+        <circle class="core" r="6"/>
+      </g>
+      <!-- Bellatrix -->
+      <g class="cg-star" transform="translate(280 420)" style="--dur:4.0s;--delay:.5s">
+        <circle class="core" r="4.5"/>
+      </g>
+      <!-- Mintaka (belt L) -->
+      <g class="cg-star" transform="translate(130 510)" style="--dur:3.8s;--delay:.2s">
+        <circle class="core" r="4"/>
+      </g>
+      <!-- Alnilam (belt C) -->
+      <g class="cg-star" transform="translate(200 520)" style="--dur:3.5s;--delay:.8s">
+        <circle class="core" r="4.5"/>
+      </g>
+      <!-- Alnitak (belt R) -->
+      <g class="cg-star" transform="translate(270 530)" style="--dur:4.2s;--delay:.4s">
+        <circle class="core" r="4"/>
+      </g>
+      <!-- Saiph -->
+      <g class="cg-star" transform="translate(110 620)" style="--dur:3.7s;--delay:.6s">
+        <circle class="core" r="4.5"/>
+      </g>
+      <!-- Rigel (brightest) -->
+      <g class="cg-star" transform="translate(290 630)" style="--dur:3.9s;--delay:.1s">
+        <circle class="core" r="6"/>
+      </g>
+    </g>
+
+    <!-- 3. CYGNUS — Northern Cross, left of clock at clock height. -->
+    <g class="cg cg-3" aria-label="Cygnus">
+      <polyline class="cg-line"
+        points="200,380 200,510 200,640 200,510 60,510 200,510 340,510"/>
+      <!-- Deneb (top, brightest) -->
+      <g class="cg-star" transform="translate(200 380)" style="--dur:3.6s;--delay:.0s">
+        <circle class="core" r="6"/>
+      </g>
+      <!-- Sadr (center) -->
+      <g class="cg-star" transform="translate(200 510)" style="--dur:4.0s;--delay:.5s">
+        <circle class="core" r="5"/>
+      </g>
+      <!-- Albireo (bottom — golden double) -->
+      <g class="cg-star warm" transform="translate(200 640)" style="--dur:3.8s;--delay:.2s">
+        <circle class="core" r="4.5"/>
+      </g>
+      <!-- Gienah (left wing) -->
+      <g class="cg-star" transform="translate(60 510)" style="--dur:4.2s;--delay:.7s">
+        <circle class="core" r="4.5"/>
+      </g>
+      <!-- Delta Cygni (right wing) -->
+      <g class="cg-star" transform="translate(340 510)" style="--dur:3.7s;--delay:.4s">
+        <circle class="core" r="4.5"/>
+      </g>
+    </g>
+
+    <!-- 4. LEO — sickle (head) + triangle (back), right of clock. -->
+    <g class="cg cg-4" aria-label="Leo">
+      <polyline class="cg-line"
+        points="1080,380 1010,380 970,400 920,430 880,480 880,540 1010,580 1080,620 1010,530 920,430"/>
+      <!-- Alterf (tip of sickle) -->
+      <g class="cg-star" transform="translate(1080 380)" style="--dur:3.6s;--delay:.0s">
+        <circle class="core" r="4"/>
+      </g>
+      <!-- Rasalas -->
+      <g class="cg-star" transform="translate(1010 380)" style="--dur:4.0s;--delay:.5s">
+        <circle class="core" r="4"/>
+      </g>
+      <!-- Adhafera -->
+      <g class="cg-star" transform="translate(970 400)" style="--dur:3.8s;--delay:.3s">
+        <circle class="core" r="4"/>
+      </g>
+      <!-- Algieba (golden double) -->
+      <g class="cg-star warm" transform="translate(920 430)" style="--dur:4.2s;--delay:.8s">
+        <circle class="core" r="5"/>
+      </g>
+      <!-- Eta Leonis -->
+      <g class="cg-star" transform="translate(880 480)" style="--dur:3.7s;--delay:.2s">
+        <circle class="core" r="4"/>
+      </g>
+      <!-- Regulus (brightest, alpha Leonis) -->
+      <g class="cg-star" transform="translate(880 540)" style="--dur:3.5s;--delay:.6s">
+        <circle class="core" r="6"/>
+      </g>
+      <!-- Chertan -->
+      <g class="cg-star" transform="translate(1010 580)" style="--dur:4.1s;--delay:.4s">
+        <circle class="core" r="4"/>
+      </g>
+      <!-- Denebola (tail) -->
+      <g class="cg-star" transform="translate(1080 620)" style="--dur:3.9s;--delay:.1s">
+        <circle class="core" r="5"/>
+      </g>
+      <!-- Zosma -->
+      <g class="cg-star" transform="translate(1010 530)" style="--dur:3.8s;--delay:.7s">
+        <circle class="core" r="4"/>
+      </g>
+    </g>
+  </svg>
+
+  <svg class="hero__ring"
+       viewBox="0 0 1122 1402"
+       preserveAspectRatio="xMidYMid slice"
+       aria-hidden="true">
+    <g class="ring-cw">
+      <circle cx="560" cy="530" r="148"
+              fill="none" stroke="#9ddcff" stroke-width="1.6"
+              stroke-linecap="round" stroke-dasharray="2 22" opacity=".9"/>
+    </g>
+    <g class="ring-ccw">
+      <circle cx="560" cy="530" r="138"
+              fill="none" stroke="#5ec8ff" stroke-width="1.2"
+              stroke-linecap="round" stroke-dasharray="1 30" opacity=".75"/>
+    </g>
+  </svg>
+
+  <svg class="hero__hands"
+       viewBox="0 0 1122 1402"
+       preserveAspectRatio="xMidYMid slice"
+       aria-hidden="true">
+    <defs>
+      <linearGradient id="handFill" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"   stop-color="#080400"/>
+        <stop offset=".5"  stop-color="#1a0d02"/>
+        <stop offset="1"   stop-color="#080400"/>
+      </linearGradient>
+      <linearGradient id="handEdge" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0"   stop-color="#ffd896"/>
+        <stop offset=".5"  stop-color="#b97a2a"/>
+        <stop offset="1"   stop-color="#5a3208"/>
+      </linearGradient>
+      <radialGradient id="pinGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0"   stop-color="#fff7d6"/>
+        <stop offset=".45" stop-color="#f3a93b"/>
+        <stop offset="1"   stop-color="#7a3d00"/>
+      </radialGradient>
+      <radialGradient id="pinGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0"   stop-color="rgba(255,184,77,.55)"/>
+        <stop offset=".55" stop-color="rgba(255,184,77,.18)"/>
+        <stop offset="1"   stop-color="rgba(255,184,77,0)"/>
+      </radialGradient>
+    </defs>
+
+    <g class="hand hand--hour" id="hand-hour">
+      <path d="M 560 545
+               L 552 481
+               L 555 463
+               L 560 451
+               L 565 463
+               L 568 481 Z"
+            fill="url(#handFill)"
+            stroke="url(#handEdge)" stroke-width="1.8" stroke-linejoin="round"/>
+      <path d="M 560 541 L 560 459"
+            stroke="#ffd896" stroke-width=".7" opacity=".5"/>
+    </g>
+
+    <g class="hand hand--minute" id="hand-minute">
+      <path d="M 560 548
+               L 553 437
+               L 556 415
+               L 560 403
+               L 564 415
+               L 567 437 Z"
+            fill="url(#handFill)"
+            stroke="url(#handEdge)" stroke-width="1.5" stroke-linejoin="round"/>
+      <path d="M 560 545 L 560 409"
+            stroke="#ffd896" stroke-width=".6" opacity=".45"/>
+    </g>
+
+    <g class="hand hand--second" id="hand-second">
+      <line x1="560" y1="556" x2="560" y2="423"
+            stroke="#aee2ff" stroke-width="1.6" stroke-linecap="round"/>
+      <circle cx="560" cy="431" r="2.8" fill="#e0f2ff"/>
+      <circle cx="560" cy="556" r="5"
+              fill="none" stroke="#5ec8ff" stroke-width="1.4"/>
+    </g>
+
+    <circle class="pin-glow" cx="560" cy="530" r="20" fill="url(#pinGlow)"/>
+    <circle class="pin"      cx="560" cy="530" r="6.5" fill="url(#pinGrad)"
+            stroke="#1a0d00" stroke-width="1.0"/>
+    <circle                  cx="560" cy="530" r="2.0" fill="#fff3c2"/>
+  </svg>
+</section>
+
+<section class="event-details" data-screen-label="Event Details">
+  <p class="event-details__tagline">
+    An enchanting evening celebrating the rich heritage of
+    <span class="accent">Sri Lankan Tropical Music</span>
+  </p>
+
+  <div class="event-card" role="group" aria-label="Event date, time, and venue">
+    <div class="event-card__col">
+      <span class="event-card__label">Date</span>
+      <span class="event-card__value">
+        <span class="gold">21<sup>st</sup></span> of May
+      </span>
+      <span class="event-card__sub">Thursday</span>
+    </div>
+
+    <div class="event-card__col">
+      <span class="event-card__label">Time</span>
+      <span class="event-card__value">
+        <span class="gold">6 PM</span> Onwards
+      </span>
+      <span class="event-card__sub">Doors open at 5:30</span>
+    </div>
+
+    <div class="event-card__col">
+      <span class="event-card__label">Venue</span>
+      <span class="event-card__value">
+        The M<span class="gold">a</span>in<br/>Cafete<span class="gold">r</span>ia
+      </span>
+      <span class="event-card__sub">Main Campus</span>
+    </div>
+  </div>
+</section>
+
+<script>
+(() => {
+  const hourEl = document.getElementById('hand-hour');
+  const minEl  = document.getElementById('hand-minute');
+  const secEl  = document.getElementById('hand-second');
+
+  function tick(){
+    const now = new Date();
+    const ms  = now.getMilliseconds();
+    const s   = now.getSeconds() + ms/1000;
+    const m   = now.getMinutes() + s/60;
+    const h   = (now.getHours() % 12) + m/60;
+
+    hourEl.style.transform = `rotate(${h * 30}deg)`;
+    minEl .style.transform = `rotate(${m * 6 }deg)`;
+    secEl .style.transform = `rotate(${s * 6 }deg)`;
+
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+
+</body>
+</html>

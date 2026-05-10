@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Cosmic Clock — Hero</title>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body{height:100%;background:#05060a;overflow:hidden}
+
+  .hero{
+    position:relative;
+    width:100%;
+    height:100vh;
+    min-height:420px;
+    overflow:hidden;
+  }
+
+  /* Background artwork — object-fit:cover crops to fill the viewport. */
+  .hero__art{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    object-fit:cover;
+    object-position:center center;
+    display:block;
+  }
+
+  /* Clock hands SVG.
+     viewBox + preserveAspectRatio mirror the <img>'s object-fit:cover,
+     so the user-space coordinates (836, 213) stay welded to the dial
+     center at every viewport size and aspect ratio. */
+  .hero__hands,
+  .hero__ring,
+  .hero__stars{
+    position:absolute; inset:0;
+    width:100%; height:100%;
+    pointer-events:none;
+  }
+
+  /* Slow-spinning accent ring layered over the existing blue glow.
+     Two counter-rotating dashed strokes give the static glow a sense
+     of motion without erasing the painted halo. */
+  .hero__ring .ring-cw,
+  .hero__ring .ring-ccw{
+    transform-box:view-box;
+    transform-origin:835px 226px;
+    filter:
+      drop-shadow(0 0 4px rgba(94,200,255,.85))
+      drop-shadow(0 0 12px rgba(94,200,255,.55));
+  }
+  .hero__ring .ring-cw  { animation:ringCW  28s linear infinite; }
+  .hero__ring .ring-ccw { animation:ringCCW 46s linear infinite; }
+  @keyframes ringCW  { from{transform:rotate(0)} to{transform:rotate(360deg)} }
+  @keyframes ringCCW { from{transform:rotate(0)} to{transform:rotate(-360deg)} }
+  @media (prefers-reduced-motion:reduce){
+    .hero__ring .ring-cw, .hero__ring .ring-ccw { animation:none }
+  }
+
+  /* Twinkling stars — large pulsing dots with bloom. */
+  .hero__stars circle{
+    fill:#f4faff;
+    transform-box:fill-box;
+    transform-origin:center;
+    animation:twinkle var(--dur,4s) ease-in-out infinite;
+    animation-delay:var(--delay,0s);
+    filter:
+      drop-shadow(0 0 4px rgba(220,240,255,1))
+      drop-shadow(0 0 12px rgba(120,190,255,.85))
+      drop-shadow(0 0 26px rgba(94,200,255,.55));
+  }
+  .hero__stars circle.warm{
+    fill:#fff2d2;
+    filter:
+      drop-shadow(0 0 4px rgba(255,235,190,1))
+      drop-shadow(0 0 14px rgba(255,180,90,.8))
+      drop-shadow(0 0 26px rgba(255,140,40,.5));
+  }
+  @keyframes twinkle{
+    0%,100% { opacity:.25; transform:scale(.45) }
+    50%     { opacity:1;   transform:scale(1.5)  }
+  }
+  @media (prefers-reduced-motion:reduce){
+    .hero__stars circle{ animation:none; opacity:.85 }
+  }
+
+  /* Each hand is rotated around the dial pivot (836,213) in viewBox
+     coordinates.  transform-box:view-box keeps user units valid as
+     the origin, so the rotation pivot tracks the dial — not the
+     hand's own bounding-box center. */
+  .hero__hands .hand{
+    transform-box:view-box;
+    transform-origin:835px 226px;
+    will-change:transform;
+  }
+  .hero__hands .hand--hour,
+  .hero__hands .hand--minute{
+    filter:
+      drop-shadow(0 0 1px rgba(0,0,0,.95))
+      drop-shadow(0 0 5px rgba(0,0,0,.85))
+      drop-shadow(0 0 14px rgba(255,200,120,.4));
+  }
+  .hero__hands .hand--second{
+    filter:
+      drop-shadow(0 0 6px rgba(94,200,255,.85))
+      drop-shadow(0 0 14px rgba(94,200,255,.45));
+  }
+  .hero__hands .pin{
+    filter:
+      drop-shadow(0 0 6px rgba(255,184,77,.9))
+      drop-shadow(0 0 14px rgba(255,184,77,.55));
+  }
+  @keyframes pinPulse{
+    0%,100%{opacity:1}
+    50%   {opacity:.7}
+  }
+  .hero__hands .pin-glow{
+    animation:pinPulse 3.6s ease-in-out infinite;
+  }
+</style>
+</head>
+<body>
+
+<section class="hero" data-screen-label="Hero">
+  <img class="hero__art"
+       src="assets/hero-clock.png"
+       alt="A couple stands on a barren rocky landscape under a vast starlit sky, gazing up at an enormous glowing clock framed in cyan light." />
+
+  <!-- Twinkling glowing stars in the night sky -->
+  <svg class="hero__stars"
+       viewBox="0 0 1672 941"
+       preserveAspectRatio="xMidYMid slice"
+       aria-hidden="true">
+    <circle cx="120"  cy="80"  r="1.8" style="--dur:3.2s; --delay:0s"/>
+    <circle cx="260"  cy="140" r="2.4" style="--dur:4.8s; --delay:.7s"/>
+    <circle cx="380"  cy="60"  r="1.4" style="--dur:2.6s; --delay:1.4s"/>
+    <circle cx="450"  cy="210" r="2.0" style="--dur:5.2s; --delay:.3s"/>
+    <circle cx="520"  cy="95"  r="2.8" class="warm" style="--dur:6.4s; --delay:1.1s"/>
+    <circle cx="610"  cy="320" r="1.6" style="--dur:3.8s; --delay:.9s"/>
+    <circle cx="180"  cy="260" r="2.2" style="--dur:4.4s; --delay:.4s"/>
+    <circle cx="320"  cy="360" r="1.5" style="--dur:3.0s; --delay:1.8s"/>
+    <circle cx="60"   cy="180" r="1.8" style="--dur:5.6s; --delay:.2s"/>
+    <circle cx="95"   cy="360" r="1.3" style="--dur:2.8s; --delay:1.6s"/>
+    <circle cx="230"  cy="400" r="2.0" style="--dur:4.0s; --delay:1.2s"/>
+    <circle cx="410"  cy="440" r="1.6" class="warm" style="--dur:5.4s; --delay:.6s"/>
+    <circle cx="570"  cy="30"  r="1.7" style="--dur:3.4s; --delay:1.0s"/>
+    <circle cx="1080" cy="50"  r="1.6" style="--dur:3.6s; --delay:.5s"/>
+    <circle cx="1180" cy="160" r="2.6" style="--dur:5.8s; --delay:1.3s"/>
+    <circle cx="1280" cy="90"  r="1.9" style="--dur:4.2s; --delay:.1s"/>
+    <circle cx="1340" cy="230" r="1.4" style="--dur:2.8s; --delay:1.5s"/>
+    <circle cx="1430" cy="320" r="2.2" class="warm" style="--dur:6.0s; --delay:.8s"/>
+    <circle cx="1500" cy="110" r="1.7" style="--dur:3.8s; --delay:1.1s"/>
+    <circle cx="1560" cy="260" r="1.5" style="--dur:4.6s; --delay:.4s"/>
+    <circle cx="1620" cy="60"  r="2.0" style="--dur:5.0s; --delay:1.7s"/>
+    <circle cx="1140" cy="380" r="1.6" style="--dur:3.2s; --delay:.9s"/>
+    <circle cx="1250" cy="440" r="1.3" style="--dur:2.6s; --delay:1.4s"/>
+    <circle cx="1380" cy="410" r="1.9" style="--dur:4.8s; --delay:.2s"/>
+    <circle cx="1540" cy="410" r="1.4" style="--dur:3.4s; --delay:1.0s"/>
+    <circle cx="1480" cy="180" r="1.2" style="--dur:2.4s; --delay:.7s"/>
+  </svg>
+
+  <!-- Decorative rotating ring sitting on top of the painted blue glow.
+       Same viewBox/preserveAspectRatio as the image, so it tracks the
+       dial across viewport sizes. -->
+  <svg class="hero__ring"
+       viewBox="0 0 1672 941"
+       preserveAspectRatio="xMidYMid slice"
+       aria-hidden="true">
+    <!-- Outer dashed arc, slow clockwise -->
+    <g class="ring-cw">
+      <circle cx="835" cy="226" r="212"
+              fill="none"
+              stroke="#9ddcff"
+              stroke-width="2.2"
+              stroke-linecap="round"
+              stroke-dasharray="2 26"
+              opacity=".9"/>
+    </g>
+    <!-- Inner dashed arc, slower counter-clockwise -->
+    <g class="ring-ccw">
+      <circle cx="835" cy="226" r="198"
+              fill="none"
+              stroke="#5ec8ff"
+              stroke-width="1.6"
+              stroke-linecap="round"
+              stroke-dasharray="1 38"
+              opacity=".75"/>
+    </g>
+    <!-- Bright sweeping highlight arc that orbits the rim -->
+    <g class="ring-cw" style="animation-duration:18s">
+      <circle cx="835" cy="226" r="205"
+              fill="none"
+              stroke="#e6f6ff"
+              stroke-width="3.2"
+              stroke-linecap="round"
+              stroke-dasharray="30 1290"
+              opacity=".85"/>
+    </g>
+  </svg>
+
+  <svg class="hero__hands"
+       viewBox="0 0 1672 941"
+       preserveAspectRatio="xMidYMid slice"
+       aria-hidden="true">
+    <defs>
+      <linearGradient id="handFill" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0"   stop-color="#080400"/>
+        <stop offset=".5"  stop-color="#1a0d02"/>
+        <stop offset="1"   stop-color="#080400"/>
+      </linearGradient>
+      <linearGradient id="handEdge" x1="0" y1="0" x2="0" y2="1">
+        <stop offset="0"   stop-color="#ffd896"/>
+        <stop offset=".5"  stop-color="#b97a2a"/>
+        <stop offset="1"   stop-color="#5a3208"/>
+      </linearGradient>
+      <radialGradient id="pinGrad" cx="50%" cy="50%" r="50%">
+        <stop offset="0"   stop-color="#fff7d6"/>
+        <stop offset=".45" stop-color="#f3a93b"/>
+        <stop offset="1"   stop-color="#7a3d00"/>
+      </radialGradient>
+      <radialGradient id="pinGlow" cx="50%" cy="50%" r="50%">
+        <stop offset="0"   stop-color="rgba(255,184,77,.55)"/>
+        <stop offset=".55" stop-color="rgba(255,184,77,.18)"/>
+        <stop offset="1"   stop-color="rgba(255,184,77,0)"/>
+      </radialGradient>
+    </defs>
+
+    <!-- Hands drawn pointing UP from pivot (836,213); JS rotates them. -->
+
+    <!-- Hour hand (drawn relative to pivot 835,226) -->
+    <g class="hand hand--hour" id="hand-hour">
+      <path d="M 835 245
+               L 823 163
+               L 828 131
+               L 835 111
+               L 842 131
+               L 847 163 Z"
+            fill="url(#handFill)"
+            stroke="url(#handEdge)" stroke-width="2.4" stroke-linejoin="round"/>
+      <path d="M 835 239 L 835 123"
+            stroke="#ffd896" stroke-width=".9" opacity=".55"/>
+    </g>
+
+    <!-- Minute hand -->
+    <g class="hand hand--minute" id="hand-minute">
+      <path d="M 835 247
+               L 826 103
+               L 831  65
+               L 835  47
+               L 839  65
+               L 844 103 Z"
+            fill="url(#handFill)"
+            stroke="url(#handEdge)" stroke-width="2.0" stroke-linejoin="round"/>
+      <path d="M 835 243 L 835 57"
+            stroke="#ffd896" stroke-width=".8" opacity=".5"/>
+    </g>
+
+    <!-- Second hand: glowing cyan baton with counterweight -->
+    <g class="hand hand--second" id="hand-second">
+      <line x1="835" y1="259" x2="835" y2="43"
+            stroke="#aee2ff" stroke-width="2.2" stroke-linecap="round"/>
+      <circle cx="835" cy="57"  r="4" fill="#e0f2ff"/>
+      <circle cx="835" cy="259" r="7"
+              fill="none" stroke="#5ec8ff" stroke-width="1.8"/>
+    </g>
+
+    <!-- Center pin -->
+    <circle class="pin-glow" cx="835" cy="226" r="26" fill="url(#pinGlow)"/>
+    <circle class="pin"      cx="835" cy="226" r="9"  fill="url(#pinGrad)"
+            stroke="#1a0d00" stroke-width="1.3"/>
+    <circle                  cx="835" cy="226" r="2.6" fill="#fff3c2"/>
+  </svg>
+</section>
+
+<script>
+(() => {
+  const hourEl = document.getElementById('hand-hour');
+  const minEl  = document.getElementById('hand-minute');
+  const secEl  = document.getElementById('hand-second');
+
+  function tick(){
+    const now = new Date();
+    const ms  = now.getMilliseconds();
+    const s   = now.getSeconds() + ms/1000;
+    const m   = now.getMinutes() + s/60;
+    const h   = (now.getHours() % 12) + m/60;
+
+    hourEl.style.transform = `rotate(${h * 30}deg)`;
+    minEl .style.transform = `rotate(${m * 6 }deg)`;
+    secEl .style.transform = `rotate(${s * 6 }deg)`;
+
+    requestAnimationFrame(tick);
+  }
+  requestAnimationFrame(tick);
+})();
+</script>
+
+</body>
+</html>
