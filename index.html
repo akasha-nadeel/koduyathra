@@ -162,6 +162,7 @@
     display:flex; align-items:center; justify-content:center;
     pointer-events:none;
     animation:brandFloat 8s ease-in-out infinite;
+    z-index:10;
   }
   /* Desktop: nudge ship logo up so it doesn't crowd the bottom edge. */
   @media (min-width: 720px){
@@ -178,11 +179,11 @@
       drop-shadow(0 0 12px rgba(94,200,255,.45));
   }
 
-  /* Decorative dotted rings — clock center (560, 530), painted ring r ≈ 145. */
+  /* Decorative dotted rings — clock center (560, 538), painted ring r ≈ 140. */
   .hero__ring .ring-cw,
   .hero__ring .ring-ccw{
     transform-box:view-box;
-    transform-origin:560px 530px;
+    transform-origin:560px 538px;
     filter:
       drop-shadow(0 0 4px rgba(94,200,255,.85))
       drop-shadow(0 0 12px rgba(94,200,255,.5));
@@ -290,10 +291,10 @@
     }
   }
 
-  /* Hands rotate around dial pivot (560, 530). */
+  /* Hands rotate around dial pivot (560, 538). */
   .hero__hands .hand{
     transform-box:view-box;
-    transform-origin:560px 530px;
+    transform-origin:560px 538px;
     will-change:transform;
   }
   .hero__hands .hand--hour,
@@ -348,10 +349,9 @@
       rgba(243,169,59,0) 100%);
     box-shadow:0 0 10px rgba(243,169,59,.35);
   }
-  /* Top gold rule omitted so the hero's bottom fade blends straight
-     into the black event-details. Bottom rule kept as a section close. */
-  .event-details::before{ display:none; }
-  .event-details::after{ bottom:0; }
+  /* Both gold rules removed; sections flow black-on-black. */
+  .event-details::before,
+  .event-details::after{ display:none; }
 
   /* ───── Slogan between countdown and event card ───── */
   .event-details__slogan{
@@ -461,21 +461,18 @@
   }
   .site-footer__pill{
     width:100%;
-    max-width:680px;
-    background:#fff;
-    border-radius:9999px;
-    padding:clamp(12px, 2vw, 24px) clamp(20px, 3.5vw, 40px);
-    box-shadow:
-      0 0 0 1px rgba(255,255,255,.06),
-      0 10px 40px rgba(255,225,150,.18),
-      0 0 60px rgba(255,210,130,.12);
+    max-width:880px;
+    display:flex;
+    justify-content:center;
+    opacity:.85;
   }
   .site-footer__pill img{
     display:block;
     width:100%;
     height:auto;
-    max-height:70px;
+    max-height:140px;
     object-fit:contain;
+    border-radius:28px;
   }
 
   .event-card{
@@ -780,12 +777,12 @@
        preserveAspectRatio="xMidYMid slice"
        aria-hidden="true">
     <g class="ring-cw">
-      <circle cx="560" cy="530" r="148"
+      <circle cx="560" cy="538" r="148"
               fill="none" stroke="#9ddcff" stroke-width="1.6"
               stroke-linecap="round" stroke-dasharray="2 22" opacity=".9"/>
     </g>
     <g class="ring-ccw">
-      <circle cx="560" cy="530" r="138"
+      <circle cx="560" cy="538" r="138"
               fill="none" stroke="#5ec8ff" stroke-width="1.2"
               stroke-linecap="round" stroke-dasharray="1 30" opacity=".75"/>
     </g>
@@ -819,41 +816,41 @@
     </defs>
 
     <g class="hand hand--hour" id="hand-hour">
-      <path d="M 560 530
-               L 552 481
-               L 555 463
-               L 560 451
-               L 565 463
-               L 568 481 Z"
+      <path d="M 560 538
+               L 552 489
+               L 555 471
+               L 560 459
+               L 565 471
+               L 568 489 Z"
             fill="url(#handFill)"
             stroke="url(#handEdge)" stroke-width="1.8" stroke-linejoin="round"/>
-      <path d="M 560 530 L 560 459"
+      <path d="M 560 538 L 560 467"
             stroke="#ffd896" stroke-width=".7" opacity=".5"/>
     </g>
 
     <g class="hand hand--minute" id="hand-minute">
-      <path d="M 560 530
-               L 553 437
-               L 556 415
-               L 560 403
-               L 564 415
-               L 567 437 Z"
+      <path d="M 560 538
+               L 553 445
+               L 556 423
+               L 560 411
+               L 564 423
+               L 567 445 Z"
             fill="url(#handFill)"
             stroke="url(#handEdge)" stroke-width="1.5" stroke-linejoin="round"/>
-      <path d="M 560 530 L 560 409"
+      <path d="M 560 538 L 560 417"
             stroke="#ffd896" stroke-width=".6" opacity=".45"/>
     </g>
 
     <g class="hand hand--second" id="hand-second">
-      <line x1="560" y1="530" x2="560" y2="423"
+      <line x1="560" y1="538" x2="560" y2="431"
             stroke="#aee2ff" stroke-width="1.6" stroke-linecap="round"/>
-      <circle cx="560" cy="431" r="2.8" fill="#e0f2ff"/>
+      <circle cx="560" cy="439" r="2.8" fill="#e0f2ff"/>
     </g>
 
-    <circle class="pin-glow" cx="560" cy="530" r="20" fill="url(#pinGlow)"/>
-    <circle class="pin"      cx="560" cy="530" r="6.5" fill="url(#pinGrad)"
+    <circle class="pin-glow" cx="560" cy="538" r="20" fill="url(#pinGlow)"/>
+    <circle class="pin"      cx="560" cy="538" r="6.5" fill="url(#pinGrad)"
             stroke="#1a0d00" stroke-width="1.0"/>
-    <circle                  cx="560" cy="530" r="2.0" fill="#fff3c2"/>
+    <circle                  cx="560" cy="538" r="2.0" fill="#fff3c2"/>
   </svg>
 </section>
 
@@ -915,8 +912,8 @@
 
 <footer class="site-footer">
   <div class="site-footer__pill">
-    <img src="assets/foc.webp"
-         alt="Students' Union Faculty of Computing — Sabaragamuwa University of Sri Lanka"
+    <img src="assets/faculty-of-computing.webp"
+         alt="Faculty of Computing — Sabaragamuwa University of Sri Lanka"
          decoding="async" />
   </div>
 </footer>
