@@ -149,11 +149,16 @@
     pointer-events:none;
     animation:brandFloat 8s ease-in-out infinite;
   }
+  /* Desktop: nudge ship logo up so it doesn't crowd the bottom edge. */
+  @media (min-width: 720px){
+    .hero__logo-bottom{ bottom:12%; }
+  }
   .hero__logo-bottom img.logo{
-    width:60%;
-    max-width:520px;
+    width:38%;
+    max-width:340px;
     height:auto;
     display:block;
+    opacity:.8;
     filter:
       drop-shadow(0 0 2px rgba(170,215,255,.6))
       drop-shadow(0 0 12px rgba(94,200,255,.45));
