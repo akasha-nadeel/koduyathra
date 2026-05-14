@@ -4,12 +4,96 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Kodu Yathra — Invitation</title>
-<link rel="preload" as="image" href="assets/hero-clock-portrait-v2.webp" type="image/webp" fetchpriority="high">
+<link rel="preload" as="image" href="assets/preloader_1.png" type="image/png" fetchpriority="high">
+<link rel="preload" as="image" href="assets/hero-clock-portrait-v2.webp" type="image/webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
+
+  /* ───── Preloader ───── */
+  .preloader{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    background:#0b0816;
+    overflow:hidden;
+    transition:background .2s ease, opacity .5s ease;
+  }
+  .preloader.is-hiding{
+    opacity:0;
+    pointer-events:none;
+  }
+  body.preloader-active{
+    overflow:hidden !important;
+  }
+
+  /* Wrapper spins continuously */
+  .preloader__spinner{
+    animation:portalSpin 4s linear infinite;
+  }
+  /* Portal image inside the spinner */
+  .preloader__portal{
+    width:min(55vw, 55vh);
+    height:auto;
+    border-radius:50%;
+    object-fit:cover;
+    aspect-ratio:1/1;
+    display:block;
+    transition:transform 1.4s cubic-bezier(.4,.0,.2,1);
+  }
+  /* Portal opens: zoom + entire overlay fades so website shows during zoom */
+  .preloader.is-opening{
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .8s ease .3s;
+  }
+  .preloader.is-opening .preloader__portal{
+    transform:scale(25);
+  }
+  @keyframes portalSpin{
+    from{transform:rotate(0deg)}
+    to{transform:rotate(360deg)}
+  }
+
+
+  /* Floating sparkle particles */
+  .preloader__particles{
+    position:absolute;
+    inset:0;
+    pointer-events:none;
+    overflow:hidden;
+  }
+  .preloader__particle{
+    position:absolute;
+    width:4px;
+    height:4px;
+    border-radius:50%;
+    background:radial-gradient(circle, rgba(200,160,255,1) 0%, rgba(200,160,255,0) 70%);
+    animation:particleDrift var(--pdur,6s) ease-in-out infinite;
+    animation-delay:var(--pdelay,0s);
+    left:var(--px,50%);
+    top:var(--py,50%);
+    opacity:0;
+  }
+  @keyframes particleDrift{
+    0%{opacity:0;transform:translate(0,0) scale(.5)}
+    20%{opacity:.9}
+    80%{opacity:.6}
+    100%{opacity:0;transform:translate(var(--pdx,30px),var(--pdy,-60px)) scale(0)}
+  }
+
+
+
+  @media (prefers-reduced-motion:reduce){
+    .preloader__portal{animation:none;}
+    .preloader__particle{animation:none;display:none;}
+    .preloader__glow{animation:none;}
+  }
   html{
     scroll-behavior:smooth;
     -webkit-tap-highlight-color:transparent;
@@ -566,7 +650,18 @@
   }
 </style>
 </head>
-<body>
+<body class="preloader-active">
+
+<!-- Preloader overlay -->
+<div class="preloader" id="preloader" aria-label="Loading Kodu Yathra">
+  <div class="preloader__particles" id="preloaderParticles"></div>
+  <div class="preloader__spinner">
+    <img class="preloader__portal"
+         src="assets/preloader_1.png"
+         alt=""
+         draggable="false" />
+  </div>
+</div>
 
 <section class="hero" data-screen-label="Hero">
   <img class="hero__art"
@@ -919,6 +1014,50 @@
 </footer>
 
 <script>
+/* Preloader: spin portal, then open and reveal site */
+(() => {
+  const preloader = document.getElementById('preloader');
+  const particleBox = document.getElementById('preloaderParticles');
+  if(!preloader) return;
+
+  // Generate floating sparkle particles
+  for(let i = 0; i < 20; i++){
+    const p = document.createElement('div');
+    p.className = 'preloader__particle';
+    const angle = Math.random() * Math.PI * 2;
+    const dist = 40 + Math.random() * 80;
+    p.style.setProperty('--px', (40 + Math.random() * 20) + '%');
+    p.style.setProperty('--py', (35 + Math.random() * 30) + '%');
+    p.style.setProperty('--pdx', (Math.cos(angle) * dist) + 'px');
+    p.style.setProperty('--pdy', (Math.sin(angle) * dist) + 'px');
+    p.style.setProperty('--pdur', (3 + Math.random() * 4) + 's');
+    p.style.setProperty('--pdelay', (Math.random() * 3) + 's');
+    p.style.width = (2 + Math.random() * 4) + 'px';
+    p.style.height = p.style.width;
+    particleBox.appendChild(p);
+  }
+
+  // Minimum display time + wait for window load
+  const minTime = 1200;
+  const start = Date.now();
+
+  function dismiss(){
+    const elapsed = Date.now() - start;
+    const remaining = Math.max(0, minTime - elapsed);
+
+    setTimeout(() => {
+      // Phase 1: portal zooms + background fades, website shows through
+      preloader.classList.add('is-opening');
+      document.body.classList.remove('preloader-active');
+
+      // Phase 2: remove from DOM after animation completes
+      setTimeout(() => preloader.remove(), 1400);
+    }, remaining);
+  }
+
+  window.addEventListener('load', dismiss);
+})();
+
 (() => {
   const hourEl = document.getElementById('hand-hour');
   const minEl  = document.getElementById('hand-minute');
