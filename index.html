@@ -4,12 +4,377 @@
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
 <title>Kodu Yathra — Invitation</title>
-<link rel="preload" as="image" href="assets/hero-clock-portrait-v2.webp" type="image/webp" fetchpriority="high">
+<link rel="preload" as="image" href="assets/preloader_1.png" type="image/png" fetchpriority="high">
+<link rel="preload" as="image" href="assets/hero-clock-portrait-v2.webp" type="image/webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Playfair+Display:wght@600;700;800&display=swap" rel="stylesheet">
 <style>
   *{box-sizing:border-box;margin:0;padding:0}
+
+  /* ═══════════ Preloader: portal spins → accelerates → zooms → reveals ═══════════ */
+  .preloader{
+    position:fixed;
+    inset:0;
+    z-index:9999;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    background:transparent;
+    isolation:isolate;
+    transition:opacity .6s ease;
+  }
+  /* @property lets us animate the hole-radius CSS var smoothly */
+  @property --hole {
+    syntax: '<percentage>';
+    inherits: false;
+    initial-value: 0%;
+  }
+  /* Solid dark veil with a circular cut-out in the middle.
+     The hole grows during the plunge so the website is revealed through
+     the portal's opening. */
+  .preloader__veil{
+    position:absolute; inset:0;
+    background:
+      radial-gradient(ellipse at 50% 50%, #0a1428 0%, #060d1a 38%, #02030a 100%);
+    z-index:0;
+    --hole: 0%;
+    -webkit-mask-image: radial-gradient(circle at center,
+      transparent 0%,
+      transparent var(--hole),
+      #000 calc(var(--hole) + 2%));
+            mask-image: radial-gradient(circle at center,
+      transparent 0%,
+      transparent var(--hole),
+      #000 calc(var(--hole) + 2%));
+    will-change: --hole;
+  }
+  /* The veil's hole tracks the portal's scale 1:1 — same duration, same
+     easing, proportional keyframes — so the website reveal stays welded
+     to the portal's mouth as the swirl rushes toward the viewer. */
+  .preloader.is-opening .preloader__veil{
+    animation: openHole 1.6s cubic-bezier(.55,.02,.7,1) forwards;
+  }
+  @keyframes openHole{
+    0%   { --hole: 10%   }   /* scale 1.15 → hole matches portal mouth */
+    25%  { --hole: 50% }   /* scale 2.6  → proportional to portal zoom */
+    50%  { --hole: 60%  }   /* scale 6    → portal dominates screen */
+    100% { --hole: 180% }   /* scale 34   → past viewport */
+  }
+  body.preloader-active{ overflow:hidden !important; }
+  /* Pause expensive hero animations while preloader is visible — frees GPU. */
+  body.preloader-active .hero__stars circle,
+  body.preloader-active .hero__stars .cg,
+  body.preloader-active .hero__stars .cg-star,
+  body.preloader-active .hero__ring .ring-cw,
+  body.preloader-active .hero__ring .ring-ccw,
+  body.preloader-active .hero__brand,
+  body.preloader-active .hero__logo-bottom,
+  body.preloader-active .hero__hands .pin-glow{
+    animation-play-state:paused !important;
+  }
+
+  /* Static starfield (no animation) */
+  .preloader__stars{
+    position:absolute; inset:0;
+    z-index:1;
+    pointer-events:none;
+    background-image:
+      radial-gradient(1.5px 1.5px at 12% 18%, #cfe4ff 0%, transparent 100%),
+      radial-gradient(1.5px 1.5px at 78% 64%, #aee2ff 0%, transparent 100%),
+      radial-gradient(1.2px 1.2px at 58% 84%, #bfd6f8 0%, transparent 100%),
+      radial-gradient(1px   1px   at 92% 78%, #8ecfff 0%, transparent 100%),
+      radial-gradient(1px   1px   at 22% 48%, #d0e4ff 0%, transparent 100%),
+      radial-gradient(1.4px 1.4px at 71% 46%, #b4dcff 0%, transparent 100%),
+      radial-gradient(1px   1px   at  5% 72%, #cfe4ff 0%, transparent 100%),
+      radial-gradient(1.3px 1.3px at 35%  8%, #aee2ff 0%, transparent 100%),
+      radial-gradient(.8px  .8px  at 88% 12%, #d0e4ff 0%, transparent 100%),
+      radial-gradient(1.6px 1.6px at 45% 92%, #8ecfff 0%, transparent 100%),
+      radial-gradient(.9px  .9px  at 62% 22%, #b4dcff 0%, transparent 100%),
+      radial-gradient(1.1px 1.1px at 95% 45%, #cfe4ff 0%, transparent 100%),
+      radial-gradient(.7px  .7px  at 15% 88%, #bfd6f8 0%, transparent 100%),
+      radial-gradient(1.3px 1.3px at 52% 38%, #aee2ff 0%, transparent 100%),
+      radial-gradient(.8px  .8px  at  3% 42%, #d0e4ff 0%, transparent 100%),
+      radial-gradient(1px   1px   at 82% 90%, #8ecfff 0%, transparent 100%),
+      radial-gradient(1.2px 1.2px at 28% 62%, #b4dcff 0%, transparent 100%),
+      radial-gradient(.6px  .6px  at 68%  5%, #cfe4ff 0%, transparent 100%),
+      radial-gradient(1.1px 1.1px at 42% 72%, #bfd6f8 0%, transparent 100%),
+      radial-gradient(.9px  .9px  at 97% 58%, #aee2ff 0%, transparent 100%),
+      radial-gradient(1.4px 1.4px at  8% 32%, #8ecfff 0%, transparent 100%),
+      radial-gradient(.7px  .7px  at 55% 55%, #d0e4ff 0%, transparent 100%);
+    opacity:.6;
+  }
+
+  /* Expanding shockwave rings — pulse outward from portal core */
+  .preloader__rings{
+    display:none;
+    position:absolute; left:50%; top:50%;
+    width:0; height:0;
+    pointer-events:none;
+    transform:translate(-50%,-50%);
+    z-index:2;
+  }
+  .preloader__ring{
+    position:absolute; left:50%; top:50%;
+    width:min(55vw,55vh); height:min(55vw,55vh);
+    margin-left:calc(min(55vw,55vh) / -2);
+    margin-top:calc(min(55vw,55vh) / -2);
+    border-radius:50%;
+    border:1.5px solid rgba(94,200,255,.55);
+    opacity:0;
+    animation:ringPulse 3.2s ease-out infinite;
+    will-change:transform, opacity;
+  }
+  .preloader__ring:nth-child(2){ animation-delay:1.6s; border-color:rgba(94,200,255,.55); }
+  @keyframes ringPulse{
+    0%   { transform:scale(.55); opacity:0;   border-width:2px }
+    18%  { opacity:.95 }
+    100% { transform:scale(1.9); opacity:0;   border-width:.5px }
+  }
+
+  /* Breathing halo behind portal */
+  .preloader__halo{
+    position:absolute; left:50%; top:50%;
+    z-index:1;
+    width:min(85vw,85vh); height:min(85vw,85vh);
+    transform:translate(-50%,-50%);
+    pointer-events:none;
+    background:radial-gradient(circle at center,
+      rgba(94,200,255,.40) 0%,
+      rgba(60,150,220,.22) 22%,
+      rgba(94,160,220,.12) 42%,
+      rgba(0,0,0,0)       70%);
+    animation:haloBreathe 3.4s ease-in-out infinite;
+  }
+  @keyframes haloBreathe{
+    0%,100%{ transform:translate(-50%,-50%) scale(.92); opacity:.7 }
+    50%    { transform:translate(-50%,-50%) scale(1.08); opacity:1  }
+  }
+
+  /* ─── Portal stack: 3 counter-rotating layers ─── */
+  .preloader__portal-wrap{
+    position:relative;
+    width:min(55vw,55vh);
+    aspect-ratio:1/1;
+    display:flex; align-items:center; justify-content:center;
+    animation:portalEnter 1.4s cubic-bezier(.16,.84,.36,1) both;
+    will-change:transform;
+    z-index:3; /* above veil + stars/halo/rings */
+  }
+  @keyframes portalEnter{
+    0%   { transform:scale(.4)  rotate(-12deg); opacity:0 }
+    100% { transform:scale(1)   rotate(0);     opacity:1 }
+  }
+  .preloader__portal-layer{
+    position:absolute; inset:0;
+    border-radius:50%;
+    /* `cover` makes the portal swirl fill the circle; border-radius:50% clips
+       off the dark navy corners of the source image. */
+    background:center/cover no-repeat url("assets/preloader_1.png");
+    will-change:transform;
+    transform:translateZ(0);
+    /* Screen blend lifts any residual dark edges off the page bg. */
+    mix-blend-mode:screen;
+    /* Knock out the dark eye in the middle of the swirl so whatever sits
+       behind (the veil's revealed hole → the website) shows through it. */
+    -webkit-mask-image: radial-gradient(circle at center,
+      transparent 0%,
+      transparent 16%,
+      rgba(0,0,0,.35) 19%,
+      #000 23%);
+            mask-image: radial-gradient(circle at center,
+      transparent 0%,
+      transparent 16%,
+      rgba(0,0,0,.35) 19%,
+      #000 23%);
+  }
+  .preloader__portal-layer--main{
+    --s:1;
+    animation:spinCW 6s linear infinite;
+  }
+  @keyframes spinCW  { from{transform:rotate(0)         scale(var(--s,1))} to{transform:rotate(360deg)  scale(var(--s,1))} }
+  @keyframes spinCCW { from{transform:rotate(0)         scale(var(--s,1))} to{transform:rotate(-360deg) scale(var(--s,1))} }
+
+  /* Bright eclipse rim around the now-transparent hole. No black fill
+     in the middle — that area has to stay see-through. */
+  .preloader__core{
+    position:absolute;
+    width:30%; height:30%;
+    border-radius:50%;
+    pointer-events:none;
+    background:
+      radial-gradient(circle at 50% 50%,
+        rgba(0,0,0,0) 0%,
+        rgba(0,0,0,0) 58%,
+        rgba(94,200,255,.65) 64%,
+        rgba(180,230,255,.90) 68%,
+        rgba(0,0,0,0) 80%);
+    mix-blend-mode:screen;
+    animation:corePulse 2.2s ease-in-out infinite;
+    will-change:transform;
+  }
+  @keyframes corePulse{
+    0%,100%{ transform:scale(1)    }
+    50%    { transform:scale(1.08) }
+  }
+
+  /* Inward-streaming particles */
+  .preloader__particles{
+    position:absolute; inset:0;
+    pointer-events:none;
+    overflow:hidden;
+    z-index:2;
+  }
+  .preloader__particle{
+    position:absolute; left:50%; top:50%;
+    width:3px; height:3px;
+    border-radius:50%;
+    background:rgba(180,220,255,.95);
+    --sx:0px; --sy:0px;
+    transform:translate(-50%,-50%) translate(var(--sx),var(--sy));
+    animation:particleSuck var(--pdur,3.2s) cubic-bezier(.55,0,.85,.2) infinite;
+    animation-delay:var(--pdelay,0s);
+    opacity:0;
+  }
+  .preloader__particle.warm{ background:rgba(120,190,255,.95) }
+  .preloader__particle.cyan{ background:rgba(170,230,255,.95) }
+  @keyframes particleSuck{
+    0%   { opacity:0; transform:translate(-50%,-50%) translate(var(--sx),var(--sy)) scale(1) }
+    8%   { opacity:1 }
+    85%  { opacity:.95 }
+    100% { opacity:0; transform:translate(-50%,-50%) translate(0,0)                  scale(.1) }
+  }
+
+  /* Caption below portal */
+  .preloader__caption{
+    position:absolute; left:50%;
+    bottom:8%;
+    z-index:3;
+    transform:translateX(-50%);
+    text-align:center;
+    pointer-events:none;
+    animation:captionFloat 4s ease-in-out infinite;
+  }
+  .preloader__caption-logo{
+    display:block;
+    height:clamp(36px, 8vw, 72px);
+    width:auto;
+    margin:0 auto clamp(10px, 1.5vw, 18px);
+    opacity:.9;
+    filter:
+      drop-shadow(0 0 10px rgba(180,220,255,.55))
+      drop-shadow(0 0 24px rgba(94,200,255,.4));
+  }
+  .preloader__caption-mark{
+    height:clamp(28px,5.5vw,52px);
+    width:auto; display:block;
+    margin:0 auto 14px;
+    opacity:.88;
+    filter:
+      drop-shadow(0 0 8px rgba(180,220,255,.55))
+      drop-shadow(0 0 20px rgba(94,200,255,.45));
+  }
+  .preloader__caption-text{
+    font-family:"Cormorant Garamond","Playfair Display",Georgia,serif;
+    font-size:clamp(10px,1.5vw,13px);
+    font-weight:600;
+    letter-spacing:.42em;
+    text-transform:uppercase;
+    color:#aab7c8;
+    opacity:.78;
+  }
+  .preloader__caption-text .dot{
+    display:inline-block;
+    width:4px; height:4px;
+    border-radius:50%;
+    background:#5ec8ff;
+    box-shadow:0 0 8px rgba(94,200,255,.8);
+    vertical-align:middle;
+    margin:0 .3em;
+    animation:loadDot 1.4s ease-in-out infinite;
+  }
+  .preloader__caption-text .dot:nth-child(2){ animation-delay:.18s }
+  .preloader__caption-text .dot:nth-child(3){ animation-delay:.36s }
+  @keyframes loadDot{
+    0%,100%{ opacity:.3; transform:scale(.7) }
+    50%    { opacity:1;  transform:scale(1.2) }
+  }
+  @keyframes captionFloat{
+    0%,100%{ transform:translateX(-50%) translateY(0)    }
+    50%    { transform:translateX(-50%) translateY(-4px) }
+  }
+
+  /* ─── ACCELERATION PHASE ─── */
+  .preloader.is-accelerating .preloader__portal-layer--outer{ animation-duration:2.4s }
+  .preloader.is-accelerating .preloader__portal-layer--main { animation-duration:1.0s }
+  .preloader.is-accelerating .preloader__portal-layer--inner{ animation-duration:.6s  }
+  .preloader.is-accelerating .preloader__portal-wrap{
+    animation:portalCharge 1.0s cubic-bezier(.5,0,.9,.3) forwards;
+  }
+  .preloader.is-accelerating .preloader__caption{
+    animation:captionOut .4s ease forwards;
+  }
+  .preloader.is-accelerating .preloader__halo{
+    animation:haloFlare 1.0s ease-out forwards;
+  }
+  @keyframes portalCharge{
+    0%   { transform:scale(1)    }
+    60%  { transform:scale(.78)  }
+    100% { transform:scale(1.15) }
+  }
+  @keyframes captionOut{
+    to{ opacity:0; transform:translateX(-50%) translateY(20px) }
+  }
+  @keyframes haloFlare{
+    0%   { transform:translate(-50%,-50%) scale(1);   opacity:1 }
+    100% { transform:translate(-50%,-50%) scale(2.6); opacity:0 }
+  }
+
+  /* ─── ZOOM / PLUNGE PHASE ─── */
+  .preloader.is-opening .preloader__portal-wrap{
+    animation:portalPlunge 1.6s cubic-bezier(.55,.02,.7,1) forwards;
+  }
+  .preloader.is-opening .preloader__portal-layer--main { animation-duration:.4s }
+  .preloader.is-opening .preloader__portal-layer--inner{ animation-duration:.25s }
+  .preloader.is-opening .preloader__portal-layer--outer{ animation-duration:1.0s }
+  .preloader.is-opening .preloader__rings,
+  .preloader.is-opening .preloader__particles,
+  .preloader.is-opening .preloader__stars,
+  .preloader.is-opening .preloader__caption,
+  .preloader.is-opening .preloader__core,
+  .preloader.is-opening .preloader__halo{
+    opacity:0;
+    transition:opacity .25s ease;
+  }
+  /* Keep the preloader fully opaque through the zoom so the website is
+     not visible until the whole animation is done. */
+  .preloader.is-opening.is-done{
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .55s ease;
+  }
+  /* Portal rushes TOWARD the viewer. Quick early growth so by the halfway
+     mark the swirl already dominates the screen — the veil's hole opens
+     at that moment so the site is revealed through the portal's mouth
+     as it keeps charging past the camera. */
+  @keyframes portalPlunge{
+    0%   { transform:scale(1.15) }
+    25%  { transform:scale(2.6)  }
+    50%  { transform:scale(6)    }
+    100% { transform:scale(34)   }
+  }
+
+  /* (Final flash removed by request) */
+  .preloader__flash{ display:none; }
+
+
+  @media (prefers-reduced-motion:reduce){
+    .preloader__portal-layer{ animation:none !important; }
+    .preloader__particle, .preloader__ring, .preloader__halo, .preloader__core,
+    .preloader__stars, .preloader__caption{ animation:none !important; }
+    .preloader.is-opening .preloader__portal-wrap{ animation:none; transform:scale(8); opacity:0; transition:all 1s ease; }
+  }
   html{
     scroll-behavior:smooth;
     -webkit-tap-highlight-color:transparent;
@@ -566,7 +931,31 @@
   }
 </style>
 </head>
-<body>
+<body class="preloader-active">
+
+<!-- Preloader overlay -->
+<div class="preloader" id="preloader" aria-label="Loading Kodu Yathra">
+  <div class="preloader__veil" aria-hidden="true"></div>
+  <div class="preloader__stars" aria-hidden="true"></div>
+  <div class="preloader__halo" aria-hidden="true"></div>
+  <div class="preloader__rings" aria-hidden="true">
+    <div class="preloader__ring"></div>
+    <div class="preloader__ring"></div>
+  </div>
+  <div class="preloader__particles" id="preloaderParticles" aria-hidden="true"></div>
+  <div class="preloader__portal-wrap">
+    <div class="preloader__portal-layer preloader__portal-layer--main"></div>
+    <div class="preloader__core" aria-hidden="true"></div>
+  </div>
+  <div class="preloader__caption" aria-hidden="true">
+    <img class="preloader__caption-logo" src="assets/kodu-yathra-sinhala.webp" alt="කොඩු යාත්‍රා" decoding="async">
+    <div class="preloader__caption-text">
+      Opening Portal<span class="dot"></span><span class="dot"></span><span class="dot"></span>
+    </div>
+  </div>
+  <div class="preloader__flash" aria-hidden="true"></div>
+</div>
+
 
 <section class="hero" data-screen-label="Hero">
   <img class="hero__art"
@@ -919,6 +1308,78 @@
 </footer>
 
 <script>
+/* ═════════ Preloader: spin → wind-up → plunge → reveal ═════════ */
+(() => {
+  const preloader   = document.getElementById('preloader');
+  const particleBox = document.getElementById('preloaderParticles');
+
+  if(!preloader || !particleBox) return;
+
+  // Inward-streaming particles — each rides a straight radial line into centre
+  function seedParticles(){
+    particleBox.innerHTML = '';
+    const N = 14;
+    const tints = ['', 'cyan', 'warm', '', 'cyan', 'warm', ''];
+    for(let i = 0; i < N; i++){
+      const p = document.createElement('div');
+      const tint = tints[i % tints.length];
+      p.className = 'preloader__particle' + (tint ? ' ' + tint : '');
+      const angle = (i / N) * Math.PI * 2 + Math.random() * .35;
+      const dist  = 240 + Math.random() * 360;
+      p.style.setProperty('--sx', (Math.cos(angle) * dist) + 'px');
+      p.style.setProperty('--sy', (Math.sin(angle) * dist) + 'px');
+      p.style.setProperty('--pdur', (2.0 + Math.random() * 2.4) + 's');
+      p.style.setProperty('--pdelay', (Math.random() * 3) + 's');
+      const size = 2 + Math.random() * 3;
+      p.style.width  = size + 'px';
+      p.style.height = size + 'px';
+      particleBox.appendChild(p);
+    }
+  }
+
+  function runSequence(){
+    document.body.classList.add('preloader-active');
+    preloader.classList.remove('is-accelerating', 'is-opening', 'is-done');
+    preloader.style.display = '';
+    preloader.style.opacity = '';
+    seedParticles();
+
+    const minTime   = 2400;  // calm spin phase
+    const accelTime = 1000;  // wind-up phase
+    const start = Date.now();
+
+    function dismiss(){
+      const elapsed = Date.now() - start;
+      const remaining = Math.max(0, minTime - elapsed);
+
+      setTimeout(() => {
+        // 1. wind-up: spin accelerates, portal pulls back then surges forward
+        preloader.classList.add('is-accelerating');
+
+        setTimeout(() => {
+          // 2. plunge: fly into the dark core (site STILL hidden behind opaque preloader)
+          preloader.classList.add('is-opening');
+
+          // 3. plunge finished → fade the preloader out, then reveal site
+          setTimeout(() => {
+            preloader.classList.add('is-done');
+            document.body.classList.remove('preloader-active');
+
+          }, 1600);
+          setTimeout(() => { preloader.style.display = 'none'; }, 2300);
+        }, accelTime);
+      }, remaining);
+    }
+
+    if(document.readyState === 'complete') dismiss();
+    else window.addEventListener('load', dismiss, { once: true });
+  }
+
+  runSequence();
+
+
+})();
+
 (() => {
   const hourEl = document.getElementById('hand-hour');
   const minEl  = document.getElementById('hand-minute');
