@@ -5,7 +5,7 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
   <title>Kodu Yathra — Invitation</title>
-  <link rel="preload" as="image" href="assets/preloader_1.png" type="image/png" fetchpriority="high">
+  <link rel="preload" as="image" href="assets/preloader_1.webp" type="image/webp" fetchpriority="high">
   <link rel="preload" as="image" href="assets/hero-clock-portrait-v2.webp" type="image/webp">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -348,7 +348,7 @@
       border-radius: 50%;
       /* `cover` makes the portal swirl fill the circle; border-radius:50% clips
        off the dark navy corners of the source image. */
-      background: center/cover no-repeat url("assets/preloader_1.png");
+      background: center/cover no-repeat url("assets/preloader_1.webp");
       will-change: transform;
       transform: translateZ(0);
       /* Screen blend lifts any residual dark edges off the page bg. */
@@ -692,48 +692,6 @@
       display: none;
     }
 
-    /* Replay button */
-    .preloader-replay {
-      position: fixed;
-      bottom: 18px;
-      right: 18px;
-      z-index: 50;
-      padding: 9px 16px 9px 12px;
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      background: rgba(11, 8, 22, .7);
-      color: #aee2ff;
-      border: 1px solid rgba(173, 230, 255, .35);
-      border-radius: 999px;
-      font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
-      font-size: 12px;
-      font-weight: 600;
-      letter-spacing: .22em;
-      text-transform: uppercase;
-      cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
-      box-shadow: 0 4px 18px rgba(0, 0, 0, .5), 0 0 14px rgba(94, 200, 255, .15);
-      opacity: 0;
-      transform: translateY(8px);
-      transition: opacity .4s ease, transform .4s ease, background .2s ease, border-color .2s ease;
-    }
-
-    .preloader-replay.is-visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    .preloader-replay:hover {
-      background: rgba(94, 200, 255, .12);
-      border-color: rgba(173, 230, 255, .6);
-    }
-
-    .preloader-replay svg {
-      width: 14px;
-      height: 14px;
-    }
 
     @media (prefers-reduced-motion:reduce) {
       .preloader__portal-layer {
@@ -761,6 +719,29 @@
       scroll-behavior: smooth;
       -webkit-tap-highlight-color: transparent;
       scrollbar-gutter: stable;
+      /* Firefox */
+      scrollbar-width: thin;
+      scrollbar-color: rgba(94, 200, 255, .35) rgba(2, 3, 10, .6);
+    }
+
+    /* Webkit / Blink (Chrome, Safari, Edge) */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: rgba(2, 3, 10, .6);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(94, 200, 255, .3);
+      border-radius: 99px;
+      border: 1px solid rgba(94, 200, 255, .1);
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(94, 200, 255, .55);
+      box-shadow: 0 0 8px rgba(94, 200, 255, .4);
     }
 
     html,
@@ -1522,15 +1503,6 @@
     <div class="preloader__flash" aria-hidden="true"></div>
   </div>
 
-  <!-- Replay (appears after animation completes) -->
-  <button class="preloader-replay" id="preloaderReplay" type="button" aria-label="Replay preloading animation">
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
-      stroke-linejoin="round">
-      <path d="M3 12a9 9 0 1 0 3-6.7" />
-      <path d="M3 4v5h5" />
-    </svg>
-    Replay
-  </button>
 
   <section class="hero" data-screen-label="Hero">
     <img class="hero__art" src="assets/hero-clock-portrait-v2.webp" fetchpriority="high" decoding="async"
@@ -1859,7 +1831,7 @@
     (() => {
       const preloader = document.getElementById('preloader');
       const particleBox = document.getElementById('preloaderParticles');
-      const replayBtn = document.getElementById('preloaderReplay');
+
       if (!preloader || !particleBox) return;
 
       // Inward-streaming particles — each rides a straight radial line into centre
@@ -1911,7 +1883,7 @@
               setTimeout(() => {
                 preloader.classList.add('is-done');
                 document.body.classList.remove('preloader-active');
-                if (replayBtn) replayBtn.classList.add('is-visible');
+
               }, 1600);
               setTimeout(() => { preloader.style.display = 'none'; }, 2300);
             }, accelTime);
@@ -1924,12 +1896,7 @@
 
       runSequence();
 
-      if (replayBtn) {
-        replayBtn.addEventListener('click', () => {
-          replayBtn.classList.remove('is-visible');
-          runSequence();
-        });
-      }
+
     })();
 
     (() => {
