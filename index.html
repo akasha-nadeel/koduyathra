@@ -1476,30 +1476,64 @@
       }
     }
 
-    /* ─── Guest name from URL query parameter ─── */
-    .invite__guest {
+    /* ─── Guest name banner at the top of the page ─── */
+    .guest-banner {
       display: none;
-      font-family: "Playfair Display", Georgia, serif;
-      font-size: clamp(14px, 3.4vw, 42px);
-      font-weight: 700;
-      font-style: italic;
-      letter-spacing: .04em;
-      line-height: 1.2;
-      color: #f3a93b;
-      text-shadow:
-        0 0 14px rgba(243, 169, 59, .55),
-        0 0 28px rgba(243, 169, 59, .25),
-        0 2px 6px rgba(0, 0, 0, .85);
-      margin-top: clamp(4px, 0.8vw, 10px);
-      animation: guestFadeIn 1.2s ease-out both;
+      width: 100%;
+      padding: clamp(14px, 2.5vw, 28px) clamp(16px, 4vw, 40px);
+      text-align: center;
+      background:
+        linear-gradient(180deg,
+          rgba(10, 20, 40, .95) 0%,
+          rgba(5, 6, 10, .98) 100%);
+      border-bottom: 1px solid rgba(243, 169, 59, .2);
+      position: relative;
+      z-index: 10;
     }
 
-    .invite__guest.is-visible {
+    .guest-banner.is-visible {
       display: block;
+      animation: guestFadeIn .8s ease-out both;
+    }
+
+    .guest-banner__label {
+      font-family: "Cormorant Garamond", "Playfair Display", Georgia, serif;
+      font-size: clamp(9px, 1.6vw, 13px);
+      font-weight: 600;
+      letter-spacing: .42em;
+      text-transform: uppercase;
+      color: #aab7c8;
+      opacity: .75;
+      margin-bottom: clamp(4px, 0.6vw, 8px);
+    }
+
+    .guest-banner__name {
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(22px, 5vw, 56px);
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: .03em;
+      line-height: 1.15;
+      color: #f3a93b;
+      text-shadow:
+        0 0 18px rgba(243, 169, 59, .5),
+        0 0 36px rgba(243, 169, 59, .2),
+        0 2px 8px rgba(0, 0, 0, .85);
+    }
+
+    .guest-banner__rule {
+      width: clamp(40px, 8vw, 100px);
+      height: 1px;
+      margin: clamp(6px, 1vw, 12px) auto 0;
+      background: linear-gradient(90deg,
+        rgba(243, 169, 59, 0) 0%,
+        rgba(243, 169, 59, .7) 50%,
+        rgba(243, 169, 59, 0) 100%);
+      box-shadow: 0 0 8px rgba(243, 169, 59, .4);
     }
 
     @keyframes guestFadeIn {
-      0% { opacity: 0; transform: translateY(8px); }
+      0% { opacity: 0; transform: translateY(-10px); }
       100% { opacity: 1; transform: translateY(0); }
     }
   </style>
@@ -1530,6 +1564,12 @@
     <div class="preloader__flash" aria-hidden="true"></div>
   </div>
 
+  <!-- Guest name banner (populated from ?name= query param) -->
+  <div class="guest-banner" id="guestBanner" aria-live="polite">
+    <div class="guest-banner__label">This Invitation Is For</div>
+    <div class="guest-banner__name" id="guestName"></div>
+    <div class="guest-banner__rule" aria-hidden="true"></div>
+  </div>
 
   <section class="hero" data-screen-label="Hero">
     <img class="hero__art" src="assets/hero-clock-portrait-v2.webp" fetchpriority="high" decoding="async"
@@ -1542,7 +1582,6 @@
         <div class="invite__small">We Cordially</div>
         <div class="invite__rule"></div>
         <div class="invite__big">Invite You To</div>
-        <div class="invite__guest" id="guestName" aria-live="polite"></div>
         <div class="invite__kodu" lang="si">
           <img src="assets/kodu-yathra-sinhala.webp" alt="කොඩු යාත්‍රා" class="kodu-title" decoding="async">
         </div>
@@ -1861,9 +1900,10 @@
       const name = params.get('name');
       if (name) {
         const el = document.getElementById('guestName');
-        if (el) {
+        const banner = document.getElementById('guestBanner');
+        if (el && banner) {
           el.textContent = decodeURIComponent(name);
-          el.classList.add('is-visible');
+          banner.classList.add('is-visible');
         }
       }
     })();
