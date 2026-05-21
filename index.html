@@ -1480,9 +1480,9 @@
     .guest-name {
       display: none;
       position: absolute;
-      top: 50%;
+      top: clamp(10px, 2vw, 24px);
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translateX(-50%);
       z-index: 8;
       text-align: center;
       font-family: "Playfair Display", Georgia, serif;
