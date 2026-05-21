@@ -1480,7 +1480,7 @@
     .guest-name {
       display: none;
       position: absolute;
-      top: clamp(10px, 2vw, 24px);
+      top: 28%;
       left: 50%;
       transform: translateX(-50%);
       z-index: 8;
@@ -1532,11 +1532,11 @@
 
 
   <section class="hero" data-screen-label="Hero">
-    <img class="hero__art" src="assets/hero-clock-portrait-v2.webp" fetchpriority="high" decoding="async"
-      alt="A couple stands on a barren rocky landscape under a starlit sky, gazing up at a glowing clock framed in cyan light." />
-
     <!-- Guest name (populated from ?name= query param) -->
     <div class="guest-name" id="guestName"></div>
+
+    <img class="hero__art" src="assets/hero-clock-portrait-v2.webp" fetchpriority="high" decoding="async"
+      alt="A couple stands on a barren rocky landscape under a starlit sky, gazing up at a glowing clock framed in cyan light." />
 
     <!-- Brand lockup: invite copy. Native HTML overlay (not foreignObject)
        so iOS Safari doesn't render it in device px. -->
