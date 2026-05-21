@@ -1479,9 +1479,12 @@
     /* ─── Guest name from URL query parameter ─── */
     .guest-name {
       display: none;
-      width: 100%;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 8;
       text-align: center;
-      padding: clamp(12px, 2.5vw, 28px) 16px;
       font-family: "Playfair Display", Georgia, serif;
       font-size: clamp(18px, 4vw, 48px);
       font-weight: 700;
@@ -1503,8 +1506,6 @@
 
 <body class="preloader-active">
 
-  <!-- Guest name (populated from ?name= query param) -->
-  <div class="guest-name" id="guestName"></div>
 
   <!-- Preloader overlay -->
   <div class="preloader" id="preloader" aria-label="Loading Kodu Yathra">
@@ -1533,6 +1534,9 @@
   <section class="hero" data-screen-label="Hero">
     <img class="hero__art" src="assets/hero-clock-portrait-v2.webp" fetchpriority="high" decoding="async"
       alt="A couple stands on a barren rocky landscape under a starlit sky, gazing up at a glowing clock framed in cyan light." />
+
+    <!-- Guest name (populated from ?name= query param) -->
+    <div class="guest-name" id="guestName"></div>
 
     <!-- Brand lockup: invite copy. Native HTML overlay (not foreignObject)
        so iOS Safari doesn't render it in device px. -->
