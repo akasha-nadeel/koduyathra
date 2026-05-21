@@ -1475,6 +1475,33 @@
             rgba(173, 230, 255, 0) 100%);
       }
     }
+
+    /* ─── Guest name from URL query parameter ─── */
+    .invite__guest {
+      display: none;
+      font-family: "Playfair Display", Georgia, serif;
+      font-size: clamp(14px, 3.4vw, 42px);
+      font-weight: 700;
+      font-style: italic;
+      letter-spacing: .04em;
+      line-height: 1.2;
+      color: #f3a93b;
+      text-shadow:
+        0 0 14px rgba(243, 169, 59, .55),
+        0 0 28px rgba(243, 169, 59, .25),
+        0 2px 6px rgba(0, 0, 0, .85);
+      margin-top: clamp(4px, 0.8vw, 10px);
+      animation: guestFadeIn 1.2s ease-out both;
+    }
+
+    .invite__guest.is-visible {
+      display: block;
+    }
+
+    @keyframes guestFadeIn {
+      0% { opacity: 0; transform: translateY(8px); }
+      100% { opacity: 1; transform: translateY(0); }
+    }
   </style>
 </head>
 
@@ -1515,6 +1542,7 @@
         <div class="invite__small">We Cordially</div>
         <div class="invite__rule"></div>
         <div class="invite__big">Invite You To</div>
+        <div class="invite__guest" id="guestName" aria-live="polite"></div>
         <div class="invite__kodu" lang="si">
           <img src="assets/kodu-yathra-sinhala.webp" alt="කොඩු යාත්‍රා" class="kodu-title" decoding="async">
         </div>
@@ -1825,6 +1853,21 @@
         decoding="async" />
     </div>
   </footer>
+
+  <script>
+    /* ═════════ Guest-name from ?name= query parameter ═════════ */
+    (() => {
+      const params = new URLSearchParams(window.location.search);
+      const name = params.get('name');
+      if (name) {
+        const el = document.getElementById('guestName');
+        if (el) {
+          el.textContent = decodeURIComponent(name);
+          el.classList.add('is-visible');
+        }
+      }
+    })();
+  </script>
 
   <script>
     /* ═════════ Preloader: spin → wind-up → plunge → reveal ═════════ */
